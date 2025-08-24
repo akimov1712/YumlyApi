@@ -2,7 +2,9 @@ package ru.topbun.plugins
 
 import io.ktor.server.application.Application
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.topbun.models.user.UserTable
 import ru.topbun.utills.Env
 
 fun Application.configureDatabases() {
@@ -13,6 +15,6 @@ fun Application.configureDatabases() {
         password = Env["DATABASE_PASSWORD"],
     )
     transaction {
-//        SchemaUtils.create()
+        SchemaUtils.create(UserTable)
     }
 }
