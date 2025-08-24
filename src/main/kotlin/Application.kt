@@ -1,8 +1,8 @@
 package ru.topbun
 
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import io.ktor.server.application.Application
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import ru.topbun.plugins.configureDatabases
 import ru.topbun.plugins.configureRouting
 import ru.topbun.plugins.configureSecurity

@@ -17,6 +17,7 @@ dependencies {
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.2")
     implementation("mysql:mysql-connector-java:8.0.23")
     implementation("at.favre.lib:bcrypt:0.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
 
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.serialization.kotlinx.json)
