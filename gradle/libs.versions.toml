@@ -5,7 +5,19 @@ kotlin = "2.1.10"
 ktor = "3.2.3"
 logback = "1.4.14"
 
+dotenv = "6.4.2"
+exposed-mysql = "8.0.23"
+bcrypt = "0.10.2"
+kotlinx-datetime = "0.7.1"
+exposed-datetime = "0.61.0"
+
 [libraries]
+dotenv = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "dotenv" }
+exposed-mysql = { module = "mysql:mysql-connector-java", version.ref = "exposed-mysql" }
+bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+exposed-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed-datetime" }
+
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }

@@ -14,16 +14,17 @@ application {
 dependencies {
 
 
-    implementation("io.github.cdimascio:dotenv-kotlin:6.4.2")
-    implementation("mysql:mysql-connector-java:8.0.23")
-    implementation("at.favre.lib:bcrypt:0.10.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
+    implementation(libs.dotenv)
+    implementation(libs.exposed.mysql)
+    implementation(libs.bcrypt)
+    implementation(libs.kotlinx.datetime)
 
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.exposed.core)
     implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.datetime)
     implementation(libs.h2)
     implementation(libs.ktor.server.auth)
     implementation(libs.ktor.server.auth.jwt)
