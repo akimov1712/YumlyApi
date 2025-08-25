@@ -11,15 +11,18 @@ fun Application.configureAccountRouting(){
     routing {
         authenticate {
             route("/account"){
-                get {
-                    val accountController = AccountController(call)
-                    accountController.accountInfo()
+                route("/info"){
+                    get {
+                        val accountController = AccountController(call)
+                        accountController.accountInfo()
+                    }
+
+                    put {
+                        val accountController = AccountController(call)
+                        accountController.updateInfo()
+                    }
                 }
 
-                put {
-                    val accountController = AccountController(call)
-                    accountController.updateInfo()
-                }
             }
         }
     }

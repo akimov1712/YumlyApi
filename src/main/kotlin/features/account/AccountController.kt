@@ -1,10 +1,10 @@
 package features.account
 
-import features.signUp.entity.SignUpReceive
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
+import ru.topbun.features.account.entity.UpdateAccountInfoReceive
 import ru.topbun.models.user.UserTable
 import ru.topbun.utills.AppException
 import ru.topbun.utills.Error
@@ -18,13 +18,11 @@ class AccountController(
     suspend fun updateInfo(){
         call.wrapperException {
             val user = call.getUserFromToken()
-            val newInfo = call.receive<SignUpReceive>()
+            val newInfo = call.receive<UpdateAccountInfoReceive>()
             if (newInfo.isValid()){
                 val newUser = UserTable.updateUser(
                     id = user.id,
                     username = newInfo.username,
-                    email = newInfo.email,
-                    password = newInfo.password,
                     photoUrl = newInfo.photoUrl,
                 ) ?: throw AppException(HttpStatusCode.NotFound, Error.USER_NOT_FOUND)
                 call.respond(newUser)

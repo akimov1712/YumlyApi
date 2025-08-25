@@ -9,7 +9,6 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
-import org.jetbrains.exposed.sql.updateReturning
 
 object UserTable : IntIdTable("users") {
 
@@ -31,6 +30,12 @@ object UserTable : IntIdTable("users") {
             ?.toUser()
     }
 
+    fun getUser(id: Int): UserDTO? = transaction {
+        selectAll().where { UserTable.id eq id }
+            .firstOrNull()
+            ?.toUser()
+    }
+
     fun confirmAccount(id: Int){
         transaction {
             update({ UserTable.id eq id }) {
@@ -42,19 +47,16 @@ object UserTable : IntIdTable("users") {
     fun updateUser(
         id: Int,
         username: String,
-        email: String,
-        password: String,
         photoUrl: String?,
     ) = transaction {
-        UserTable.updateReturning(
+        UserTable.update(
             where = { UserTable.id eq id }
         ) {
             it[UserTable.username] = username
-            it[UserTable.email] = email
-            it[UserTable.password] = password
             it[UserTable.photoUrl] = photoUrl
             it[UserTable.updatedAt] = CurrentDateTime
-        }.singleOrNull()?.toUser()
+        }
+        getUser(id)
     }
 
 
