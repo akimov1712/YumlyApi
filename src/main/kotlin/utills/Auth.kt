@@ -16,13 +16,13 @@ fun String.toPasswordHash() = BCrypt.withDefaults().hashToString(12, this.toChar
 
 fun generateToken(email: String): String{
     return JWT.create()
-        .withAudience(Env["AUDIENCE"])
-        .withIssuer(Env["ISSUER"])
-        .withClaim(Env["KEY_EMAIL"], email)
-        .sign(Algorithm.HMAC256(Env["SECRET"]))
+        .withAudience(Env["JWT_AUDIENCE"])
+        .withIssuer(Env["JWT_ISSUER"])
+        .withClaim(Env["JWT_KEY_EMAIL"], email)
+        .sign(Algorithm.HMAC256(Env["JWT_SECRET"]))
 }
 
-fun JWTPrincipal?.getUsernameOrThrow() = this?.payload?.getClaim(Env["KEY_EMAIL"])?.asString() ?: throw AppException(
+fun JWTPrincipal?.getUsernameOrThrow() = this?.payload?.getClaim(Env["JWT_KEY_EMAIL"])?.asString() ?: throw AppException(
     HttpStatusCode.Unauthorized, Error.UNAUTHORIZED)
 
 fun RoutingCall.getUserFromToken(): UserDTO {

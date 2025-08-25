@@ -10,8 +10,8 @@ import ru.topbun.utills.Env
 fun Application.configureDatabases() {
     Database.connect(
         url = Env["DATABASE_URL"],
-        user = Env["DATABASE_DRIVER"],
-        driver = Env["DATABASE_USER"],
+        user = Env["DATABASE_USER"],
+        driver = Env["DATABASE_DRIVER"],
         password = Env["DATABASE_PASSWORD"],
     )
     transaction {

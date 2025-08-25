@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
-import ru.topbun.models.FieldUpdate
+import org.jetbrains.exposed.sql.updateReturning
 
 object UserTable : IntIdTable("users") {
 
@@ -31,41 +31,32 @@ object UserTable : IntIdTable("users") {
             ?.toUser()
     }
 
-    fun updateUser(
-        id: Int,
-        username: FieldUpdate<String> = FieldUpdate.Skip,
-        email: FieldUpdate<String> = FieldUpdate.Skip,
-        password: FieldUpdate<String> = FieldUpdate.Skip,
-        photoUrl: FieldUpdate<String?> = FieldUpdate.Skip,
-        isVerified: FieldUpdate<Boolean> = FieldUpdate.Skip
-    ) {
+    fun confirmAccount(id: Int){
         transaction {
-            update({ UserTable.id eq id }) { row ->
-                when(username){
-                    is FieldUpdate.Set -> username.value?.let { row[UserTable.username] = it }
-                    FieldUpdate.Skip -> {}
-                }
-                when (email) {
-                    is FieldUpdate.Set -> email.value?.let { row[UserTable.email] = it }
-                    FieldUpdate.Skip -> {}
-                }
-                when (password) {
-                    is FieldUpdate.Set -> password.value?.let { row[UserTable.password] = it }
-                    FieldUpdate.Skip -> {}
-                }
-                when (photoUrl) {
-                    is FieldUpdate.Set -> row[UserTable.photoUrl] = photoUrl.value
-                    FieldUpdate.Skip -> {}
-                }
-                when (isVerified) {
-                    is FieldUpdate.Set -> isVerified.value?.let { row[UserTable.isVerified] = it }
-                    FieldUpdate.Skip -> {}
-                }
-
-                row[updatedAt] = CurrentDateTime
+            update({ UserTable.id eq id }) {
+                it[UserTable.isVerified] = true
             }
         }
     }
+
+    fun updateUser(
+        id: Int,
+        username: String,
+        email: String,
+        password: String,
+        photoUrl: String?,
+    ) = transaction {
+        UserTable.updateReturning(
+            where = { UserTable.id eq id }
+        ) {
+            it[UserTable.username] = username
+            it[UserTable.email] = email
+            it[UserTable.password] = password
+            it[UserTable.photoUrl] = photoUrl
+            it[UserTable.updatedAt] = CurrentDateTime
+        }.singleOrNull()?.toUser()
+    }
+
 
     fun insertUser(
         username: String,
