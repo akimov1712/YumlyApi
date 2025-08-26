@@ -1,8 +1,8 @@
-package features.signUp.entity
+package ru.topbun.features.account.entity
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SignUpResponse(
+data class TokenResponse(
     val token: String
 )

@@ -1,11 +1,12 @@
 package ru.topbun.features.signUp
 
 import features.signUp.entity.SignUpReceive
-import features.signUp.entity.SignUpResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
+import models.verification.VerificationTable
+import models.verification.VerificationType
 import ru.topbun.models.user.UserTable
 import ru.topbun.utills.AppException
 import ru.topbun.utills.ErrorMessage
@@ -30,7 +31,13 @@ class SignUpController(
                     password = passwordHash,
                     photoUrl = signUp.photoUrl
                 )
-                call.respond(SignUpResponse(token = generateToken(signUp.email)))
+                val user = UserTable.getUser(signUp.email) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
+                if (user.isVerified){
+                    call.respond(generateToken(user.email))
+                } else{
+                    val code = VerificationTable.createVerification(user.id, VerificationType.SIGN_UP_CONFIRM)
+                    call.respond(code)
+                }
             }
 
         }

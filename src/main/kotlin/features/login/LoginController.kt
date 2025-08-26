@@ -4,6 +4,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
+import models.verification.VerificationTable
+import models.verification.VerificationType
 import ru.topbun.features.login.entity.LoginReceive
 import ru.topbun.models.user.UserTable
 import ru.topbun.utills.AppException
@@ -20,7 +22,12 @@ class LoginController(private val call: RoutingCall) {
             val user = UserTable.getUser(login.email) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND_WITH_EMAIL_PASSWORD)
             val passwordIsCorrect = passwordVerify(login.password, user.password)
             if (!passwordIsCorrect) throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND_WITH_EMAIL_PASSWORD)
-            call.respond(generateToken(user.email))
+            if (user.isVerified){
+                call.respond(generateToken(user.email))
+            } else{
+                val code = VerificationTable.createVerification(user.id, VerificationType.SIGN_UP_CONFIRM)
+                call.respond(code)
+            }
         }
     }
 

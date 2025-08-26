@@ -8,6 +8,9 @@ import models.error.ErrorDTO
 data class AppException(val code: HttpStatusCode, override val message: String = "") : Exception()
 
 object ErrorMessage {
+    const val VERIFICATION_CODE_NOT_FOUND = "Код подтверждения не найден"
+    const val INVALID_CODE_EXPIRED = "Код подтверждения истек, запросите код подтверждения заново"
+    const val INVALID_CODE = "Код подтверждения не верный. Попробуйте снова"
     const val UNAUTHORIZED = "Пользователь не авторизован"
     const val USER_NOT_FOUND_WITH_EMAIL_PASSWORD = "Пользователь с указанной почтой или паролем не найден"
     const val USER_NOT_FOUND = "Пользователь не найден"
