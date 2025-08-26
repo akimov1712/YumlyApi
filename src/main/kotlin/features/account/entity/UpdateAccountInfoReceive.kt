@@ -11,7 +11,7 @@ data class UpdateAccountInfoReceive(
 ){
 
     fun isValid() = when{
-        username.length < 4 -> throw AppException(HttpStatusCode.BadRequest, ru.topbun.utills.Error.USERNAME_LENGTH)
+        username.length < 4 -> throw AppException(HttpStatusCode.BadRequest, ru.topbun.utills.ErrorMessage.USERNAME_LENGTH)
         else -> true
     }
 

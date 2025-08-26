@@ -8,7 +8,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
 import ru.topbun.models.user.UserTable
 import ru.topbun.utills.AppException
-import ru.topbun.utills.Error
+import ru.topbun.utills.ErrorMessage
 import ru.topbun.utills.generateToken
 import ru.topbun.utills.toPasswordHash
 import ru.topbun.utills.wrapperException
@@ -21,7 +21,7 @@ class SignUpController(
         call.wrapperException{
             val signUp = call.receive<SignUpReceive>()
             val userIsFound = UserTable.containsUser(signUp.email)
-            if (userIsFound) throw AppException(HttpStatusCode.Conflict, Error.USER_EXISTS)
+            if (userIsFound) throw AppException(HttpStatusCode.Conflict, ErrorMessage.USER_EXISTS)
             if (signUp.isValid()){
                 val passwordHash = signUp.password.toPasswordHash()
                 UserTable.insertUser(

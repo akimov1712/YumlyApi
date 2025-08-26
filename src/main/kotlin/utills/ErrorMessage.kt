@@ -7,7 +7,7 @@ import models.error.ErrorDTO
 
 data class AppException(val code: HttpStatusCode, override val message: String = "") : Exception()
 
-object Error {
+object ErrorMessage {
     const val UNAUTHORIZED = "Пользователь не авторизован"
     const val USER_NOT_FOUND_WITH_EMAIL_PASSWORD = "Пользователь с указанной почтой или паролем не найден"
     const val USER_NOT_FOUND = "Пользователь не найден"

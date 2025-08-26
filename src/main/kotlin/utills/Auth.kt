@@ -23,11 +23,11 @@ fun generateToken(email: String): String{
 }
 
 fun JWTPrincipal?.getUsernameOrThrow() = this?.payload?.getClaim(Env["JWT_KEY_EMAIL"])?.asString() ?: throw AppException(
-    HttpStatusCode.Unauthorized, Error.UNAUTHORIZED)
+    HttpStatusCode.Unauthorized, ErrorMessage.UNAUTHORIZED)
 
 fun RoutingCall.getUserFromToken(): UserDTO {
     val principal = principal<JWTPrincipal>()
     val username = principal.getUsernameOrThrow()
-    val user = UserTable.getUser(username) ?: throw AppException(HttpStatusCode.NotFound, Error.USER_NOT_FOUND)
+    val user = UserTable.getUser(username) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
     return user
 }

@@ -7,7 +7,7 @@ import io.ktor.server.routing.RoutingCall
 import ru.topbun.features.account.entity.UpdateAccountInfoReceive
 import ru.topbun.models.user.UserTable
 import ru.topbun.utills.AppException
-import ru.topbun.utills.Error
+import ru.topbun.utills.ErrorMessage
 import ru.topbun.utills.getUserFromToken
 import ru.topbun.utills.wrapperException
 
@@ -24,7 +24,7 @@ class AccountController(
                     id = user.id,
                     username = newInfo.username,
                     photoUrl = newInfo.photoUrl,
-                ) ?: throw AppException(HttpStatusCode.NotFound, Error.USER_NOT_FOUND)
+                ) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
                 call.respond(newUser)
             }
         }
