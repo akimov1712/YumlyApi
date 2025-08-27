@@ -4,7 +4,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
-import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toKotlinLocalDateTime
 import models.verification.VerificationTable
 import models.verification.VerificationType
@@ -17,7 +16,6 @@ import ru.topbun.utills.ErrorMessage
 import ru.topbun.utills.generateToken
 import ru.topbun.utills.getUserFromToken
 import ru.topbun.utills.wrapperException
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class AccountController(
@@ -29,18 +27,11 @@ class AccountController(
             val confirmAccount = call.receive<ConfirmAccountReceive>()
             val user = UserTable.getUser(confirmAccount.email) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
 
-            suspend fun getCode(){
-                val code = VerificationTable.createVerification(user.id, VerificationType.SIGN_UP_CONFIRM)
-                call.respond(code)
-            }
+            val actualCode = VerificationTable.getOrCreateVerificationCode(user.id, VerificationType.SIGN_UP_CONFIRM)
 
-            val actualCode = VerificationTable.getVerificationCodeFromUserId(user.id, VerificationType.SIGN_UP_CONFIRM) ?: run {
-                getCode()
-                return@wrapperException
-            }
             when{
-                (actualCode.expiresAt < LocalDateTime.now().toKotlinLocalDateTime()) || actualCode == null -> {
-                    getCode()
+                (actualCode.expiresAt < LocalDateTime.now().toKotlinLocalDateTime()) -> {
+                    call.respond(actualCode)
                 }
 
                 actualCode.code == confirmAccount.code && actualCode.expiresAt > LocalDateTime.now().toKotlinLocalDateTime() -> {

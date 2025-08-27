@@ -1,12 +1,9 @@
 package models.verification
 
-import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toKotlinLocalDateTime
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import org.jetbrains.exposed.sql.selectAll
@@ -24,12 +21,17 @@ object VerificationTable : IntIdTable("verifications") {
 
 
 
-    fun getVerificationCodeFromUserId(userId: Int, type: VerificationType): VerificationDTO?{
-        val verification = transaction { VerificationTable.selectAll().where { (VerificationTable.userId eq userId) and (VerificationTable.type eq type.toString()) }.lastOrNull() }?.toVerification()
-        return verification
+    fun getOrCreateVerificationCode(userId: Int, type: VerificationType): VerificationDTO{
+        return transaction {
+            VerificationTable.selectAll().where {
+                (VerificationTable.userId eq userId) and (VerificationTable.type eq type.toString())
+            }.lastOrNull {
+                it[expiresAt] > LocalDateTime.now().toKotlinLocalDateTime()
+            }
+        }?.toVerification() ?: createVerification(userId, type)
     }
 
-    fun getVerificationCodeFromId(id: Int): VerificationDTO{
+    private fun getVerificationCodeFromId(id: Int): VerificationDTO{
         return transaction { VerificationTable.selectAll().where { VerificationTable.id eq id }.single() }.toVerification()
     }
 
@@ -50,7 +52,7 @@ object VerificationTable : IntIdTable("verifications") {
         id = this[id].value,
         userId = this[userId].value,
         code = this[code],
-        type = VerificationType.valueOf(this[code]),
+        type = VerificationType.valueOf(this[type]),
         expiresAt = this[expiresAt],
     )
 

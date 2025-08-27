@@ -22,11 +22,10 @@ fun Application.configureAccountRouting(){
                         val accountController = AccountController(call)
                         accountController.updateInfo()
                     }
-
-                    post("/confirm"){
-                        val accountController = AccountController(call)
-                        accountController.confirmAccount()
-                    }
+                }
+                post("/confirm"){
+                    val accountController = AccountController(call)
+                    accountController.confirmAccount()
                 }
             }
         }
