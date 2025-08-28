@@ -11,6 +11,7 @@ import models.verification.VerificationTable
 import models.verification.VerificationType
 import ru.topbun.features.confirmAccount.entity.VerificationStatusResponse
 import ru.topbun.features.confirmAccount.entity.VerificationStatusType
+import ru.topbun.features.messageMail.SenderMessageController
 import ru.topbun.models.user.UserTable
 import ru.topbun.utills.AppException
 import ru.topbun.utills.ErrorMessage
@@ -28,7 +29,10 @@ class ResetPasswordController(
             val user = UserTable.getUser(request.email)
                 ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
             val code = VerificationTable.getOrCreateVerificationCode(user.id, VerificationType.RESET_PASSWORD)
-            // TODO отправить на почту
+
+            val sender = SenderMessageController()
+            sender.sendVerificationMessage(request.email, code.code)
+
             call.respond(HttpStatusCode.OK)
         }
     }

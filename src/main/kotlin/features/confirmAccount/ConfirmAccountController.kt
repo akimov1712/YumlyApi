@@ -12,6 +12,7 @@ import ru.topbun.features.confirmAccount.entity.ConfirmAccountReceive
 import ru.topbun.features.confirmAccount.entity.ConfirmAccountRequestReceive
 import ru.topbun.features.confirmAccount.entity.VerificationStatusResponse
 import ru.topbun.features.confirmAccount.entity.VerificationStatusType
+import ru.topbun.features.messageMail.SenderMessageController
 import ru.topbun.models.user.UserTable
 import ru.topbun.utills.AppException
 import ru.topbun.utills.ErrorMessage
@@ -29,7 +30,10 @@ class ConfirmAccountController(
             val user = UserTable.getUser(requestReceive.email)
                 ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
             val code = VerificationTable.getOrCreateVerificationCode(user.id, VerificationType.SIGN_UP_CONFIRM)
-            // TODO отправить на почту
+
+            val sender = SenderMessageController()
+            sender.sendVerificationMessage(requestReceive.email, code.code)
+
             call.respond(HttpStatusCode.OK)
         }
     }
