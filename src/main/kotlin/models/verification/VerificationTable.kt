@@ -20,15 +20,14 @@ object VerificationTable : IntIdTable("verifications") {
     val expiresAt = datetime("expires_at")
 
 
-
     fun getOrCreateVerificationCode(userId: Int, type: VerificationType): VerificationDTO{
-        return transaction {
+        return (transaction {
             VerificationTable.selectAll().where {
                 (VerificationTable.userId eq userId) and (VerificationTable.type eq type.toString())
             }.lastOrNull {
                 it[expiresAt] > LocalDateTime.now().toKotlinLocalDateTime()
             }
-        }?.toVerification() ?: createVerification(userId, type)
+        }?.toVerification() ?: createVerification(userId, type)).also { println(it) }
     }
 
     private fun getVerificationCodeFromId(id: Int): VerificationDTO{

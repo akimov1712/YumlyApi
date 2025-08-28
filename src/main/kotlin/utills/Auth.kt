@@ -9,6 +9,7 @@ import io.ktor.server.auth.principal
 import io.ktor.server.routing.RoutingCall
 import models.user.UserDTO
 import ru.topbun.models.user.UserTable
+import ru.topbun.models.user.UserTable.username
 
 
 fun passwordVerify(receivePassword: String, hashPassword: String) = BCrypt.verifyer().verify(receivePassword.toCharArray(), hashPassword).verified
@@ -22,12 +23,12 @@ fun generateToken(email: String): String{
         .sign(Algorithm.HMAC256(Env["JWT_SECRET"]))
 }
 
-fun JWTPrincipal?.getUsernameOrThrow() = this?.payload?.getClaim(Env["JWT_KEY_EMAIL"])?.asString() ?: throw AppException(
+fun JWTPrincipal?.getEmailOrThrow() = this?.payload?.getClaim(Env["JWT_KEY_EMAIL"])?.asString() ?: throw AppException(
     HttpStatusCode.Unauthorized, ErrorMessage.UNAUTHORIZED)
 
 fun RoutingCall.getUserFromToken(): UserDTO {
     val principal = principal<JWTPrincipal>()
-    val username = principal.getUsernameOrThrow()
-    val user = UserTable.getUser(username) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
+    val email = principal.getEmailOrThrow()
+    val user = UserTable.getUser(email) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
     return user
 }

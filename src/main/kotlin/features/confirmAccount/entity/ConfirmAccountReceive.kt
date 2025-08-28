@@ -1,4 +1,4 @@
-package ru.topbun.features.account.entity
+package ru.topbun.features.confirmAccount.entity
 
 import kotlinx.serialization.Serializable
 

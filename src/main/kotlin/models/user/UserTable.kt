@@ -20,6 +20,15 @@ object UserTable : IntIdTable("users") {
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
     val updatedAt = datetime("updated_at").defaultExpression(CurrentDateTime)
 
+    fun updatePassword(id: Int, newPassword: String) {
+        transaction {
+            update({ UserTable.id eq id }) {
+                it[password] = newPassword
+                it[updatedAt] = CurrentDateTime
+            }
+        }
+    }
+
     fun containsUser(email: String): Boolean = transaction {
         selectAll().where { UserTable.email eq email }.count() > 0
     }
