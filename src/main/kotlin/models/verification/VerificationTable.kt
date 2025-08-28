@@ -21,14 +21,16 @@ object VerificationTable : IntIdTable("verifications") {
 
 
     fun getOrCreateVerificationCode(userId: Int, type: VerificationType): VerificationDTO{
-        return (transaction {
-            VerificationTable.selectAll().where {
-                (VerificationTable.userId eq userId) and (VerificationTable.type eq type.toString())
-            }.lastOrNull {
-                it[expiresAt] > LocalDateTime.now().toKotlinLocalDateTime()
-            }
-        }?.toVerification() ?: createVerification(userId, type)).also { println(it) }
+        return (getVerificationCode(userId, type) ?: createVerification(userId, type)).also { println("Get or Create code: $it") }
     }
+
+    fun getVerificationCode(userId: Int, type: VerificationType) = transaction {
+        VerificationTable.selectAll().where {
+            (VerificationTable.userId eq userId) and (VerificationTable.type eq type.toString())
+        }.lastOrNull {
+            it[expiresAt] > LocalDateTime.now().toKotlinLocalDateTime()
+        }
+    }?.toVerification().also { println("Get code: $it") }
 
     private fun getVerificationCodeFromId(id: Int): VerificationDTO{
         return transaction { VerificationTable.selectAll().where { VerificationTable.id eq id }.single() }.toVerification()

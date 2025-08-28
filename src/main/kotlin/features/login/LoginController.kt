@@ -4,8 +4,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
-import models.verification.VerificationTable
-import models.verification.VerificationType
 import ru.topbun.features.account.entity.TokenResponse
 import ru.topbun.features.login.entity.LoginReceive
 import ru.topbun.models.user.UserTable
@@ -26,8 +24,7 @@ class LoginController(private val call: RoutingCall) {
             if (user.isVerified){
                 call.respond(TokenResponse(generateToken(user.email)))
             } else{
-                val code = VerificationTable.getOrCreateVerificationCode(user.id, VerificationType.SIGN_UP_CONFIRM)
-                call.respond(code)
+                call.respond(user)
             }
         }
     }

@@ -1,7 +1,7 @@
 package ru.topbun.features.resetPassword
 
-import features.confirmAccount.entity.ResetPasswordRequestReceive
 import features.resetPassword.entity.ResetPasswordConfirmReceive
+import features.resetPassword.entity.ResetPasswordRequestReceive
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -27,8 +27,9 @@ class ResetPasswordController(
             val request = call.receive<ResetPasswordRequestReceive>()
             val user = UserTable.getUser(request.email)
                 ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
-            val code = VerificationTable.createVerification(user.id, VerificationType.RESET_PASSWORD)
-            call.respond(code)
+            val code = VerificationTable.getOrCreateVerificationCode(user.id, VerificationType.RESET_PASSWORD)
+            // TODO отправить на почту
+            call.respond(HttpStatusCode.OK)
         }
     }
 
@@ -38,13 +39,18 @@ class ResetPasswordController(
             val user = UserTable.getUser(confirm.email)
                 ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
 
-            val verification = VerificationTable.getOrCreateVerificationCode(user.id, VerificationType.RESET_PASSWORD)
+            val verification = VerificationTable.getVerificationCode(user.id, VerificationType.RESET_PASSWORD) ?: run {
+                call.respond(HttpStatusCode.Forbidden, VerificationStatusResponse(VerificationStatusType.CODE_EXPIRED))
+                return@wrapperException
+            }
 
             if (verification.code != confirm.code) {
-                call.respond(VerificationStatusResponse(VerificationStatusType.CODE_NO_MATCH))
+                call.respond(HttpStatusCode.Forbidden, VerificationStatusResponse(VerificationStatusType.CODE_NO_MATCH))
+                return@wrapperException
             }
             if (verification.expiresAt < LocalDateTime.now().toKotlinLocalDateTime()) {
-                call.respond(VerificationStatusResponse(VerificationStatusType.CODE_EXPIRED))
+                call.respond(HttpStatusCode.Forbidden, VerificationStatusResponse(VerificationStatusType.CODE_EXPIRED))
+                return@wrapperException
             }
 
             val passwordHash = confirm.newPassword.toPasswordHash()

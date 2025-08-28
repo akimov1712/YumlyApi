@@ -1,4 +1,4 @@
-package features.confirmAccount.entity
+package features.resetPassword.entity
 
 import kotlinx.serialization.Serializable
 

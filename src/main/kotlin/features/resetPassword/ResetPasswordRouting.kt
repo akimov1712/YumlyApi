@@ -12,7 +12,7 @@ fun Application.configureResetPasswordRouting(){
                 val controller = ResetPasswordController(call)
                 controller.requestReset()
             }
-            post("/confirm") {
+                post("/confirm") {
                 val controller = ResetPasswordController(call)
                 controller.confirmReset()
             }
