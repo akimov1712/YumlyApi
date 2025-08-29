@@ -1,4 +1,4 @@
-package ru.topbun.features.messageMail
+package features.senderMessage
 
 class SenderMessageController {
 

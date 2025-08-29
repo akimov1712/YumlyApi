@@ -12,7 +12,7 @@ import ru.topbun.features.confirmAccount.entity.ConfirmAccountReceive
 import ru.topbun.features.confirmAccount.entity.ConfirmAccountRequestReceive
 import ru.topbun.features.confirmAccount.entity.VerificationStatusResponse
 import ru.topbun.features.confirmAccount.entity.VerificationStatusType
-import ru.topbun.features.messageMail.SenderMessageController
+import features.senderMessage.SenderMessageController
 import ru.topbun.models.user.UserTable
 import ru.topbun.utills.AppException
 import ru.topbun.utills.ErrorMessage
