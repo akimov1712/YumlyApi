@@ -1,6 +1,6 @@
 package features.senderMessage
 
-class SenderMessageController {
+class SenderMessageManager {
 
     suspend fun sendVerificationMessage(email: String, code: String){
 

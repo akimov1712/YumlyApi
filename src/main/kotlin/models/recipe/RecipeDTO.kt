@@ -8,10 +8,10 @@ import ru.topbun.models.step.StepDTO
 @Serializable
 data class RecipeDTO(
     val id: Int,
-    val author: UserDTO,
+    val author: UserDTO?,
     val title: String,
     val description: String?,
-    val previewUrl: String,
+    val previewUrl: String?,
     val cookingTime: Int,
     val kcal: Int,
     val protein: Double,

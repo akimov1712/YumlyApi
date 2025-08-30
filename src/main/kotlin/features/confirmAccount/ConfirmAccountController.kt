@@ -1,5 +1,6 @@
 package ru.topbun.features.confirmAccount
 
+import features.senderMessage.SenderMessageManager
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -12,7 +13,6 @@ import ru.topbun.features.confirmAccount.entity.ConfirmAccountReceive
 import ru.topbun.features.confirmAccount.entity.ConfirmAccountRequestReceive
 import ru.topbun.features.confirmAccount.entity.VerificationStatusResponse
 import ru.topbun.features.confirmAccount.entity.VerificationStatusType
-import features.senderMessage.SenderMessageController
 import ru.topbun.models.user.UserTable
 import ru.topbun.utills.AppException
 import ru.topbun.utills.ErrorMessage
@@ -31,7 +31,7 @@ class ConfirmAccountController(
                 ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
             val code = VerificationTable.getOrCreateVerificationCode(user.id, VerificationType.SIGN_UP_CONFIRM)
 
-            val sender = SenderMessageController()
+            val sender = SenderMessageManager()
             sender.sendVerificationMessage(requestReceive.email, code.code)
 
             call.respond(HttpStatusCode.OK)
