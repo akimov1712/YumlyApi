@@ -2,6 +2,7 @@ package models.user
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
+import ru.topbun.models.user.ProfileDTO
 
 @Serializable
 data class UserDTO(
@@ -13,4 +14,14 @@ data class UserDTO(
     val isVerified : Boolean,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
-)
+){
+
+    fun toProfile(): ProfileDTO {
+        return ProfileDTO(
+            userId = id,
+            username = username,
+            photoUrl = photoUrl,
+        )
+    }
+
+}

@@ -1,27 +1,25 @@
-package ru.topbun.models.recipe
+package ru.topbun.features.recipe.entity
 
 import kotlinx.serialization.Serializable
-import ru.topbun.models.category.TagDTO
 import ru.topbun.models.ingredient.IngredientDTO
+import ru.topbun.models.recipe.Difficulty
 import ru.topbun.models.step.StepDTO
-import ru.topbun.models.user.ProfileDTO
 
 @Serializable
-data class RecipeDTO(
+data class AddRecipeReceive(
     val id: Int,
-    val author: ProfileDTO?,
     val title: String,
     val description: String?,
-    val largeImage: String?,
-    val smallImage: String?,
+    val previewUrl: String?,
     val cookingTime: Int,
+    val difficulty: Difficulty,
     val kcal: Int,
     val protein: Double,
     val fat: Double,
     val carb: Double,
-    val category: TagDTO?,
-    val dietsType: TagDTO?,
-    val preparation: TagDTO?,
     val ingredients: List<IngredientDTO>,
     val steps: List<StepDTO>,
+    val categoryId: Int?,
+    val dietsTypeId: Int?,
+    val preparationId: Int?,
 )

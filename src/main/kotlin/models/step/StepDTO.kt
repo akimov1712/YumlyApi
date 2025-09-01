@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class StepDTO(
     val id: Int,
-    val recipeId: Int,
     val description: String,
     val previewUrl: String?
 )

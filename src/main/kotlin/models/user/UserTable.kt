@@ -39,10 +39,10 @@ object UserTable : IntIdTable("users") {
             ?.toUser()
     }
 
-    fun getUser(id: Int): UserDTO? = transaction {
+    fun getUser(id: Int): UserDTO = transaction {
         selectAll().where { UserTable.id eq id }
-            .firstOrNull()
-            ?.toUser()
+            .first()
+            .toUser()
     }
 
     fun confirmAccount(id: Int){
@@ -85,7 +85,7 @@ object UserTable : IntIdTable("users") {
         }
     }
 
-    fun ResultRow.toUser(): UserDTO {
+    private fun ResultRow.toUser(): UserDTO {
         return UserDTO(
             id = this[id].value,
             username = this[username],
@@ -97,4 +97,6 @@ object UserTable : IntIdTable("users") {
             updatedAt = this[updatedAt],
         )
     }
+
+
 }

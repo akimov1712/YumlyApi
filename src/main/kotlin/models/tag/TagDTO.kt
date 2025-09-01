@@ -1,10 +1,10 @@
-package ru.topbun.models.ingredient
+package ru.topbun.models.category
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class IngredientDTO(
+data class TagDTO(
     val id: Int,
     val name: String,
-    val value: String,
+    val icon: String
 )

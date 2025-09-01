@@ -2,6 +2,7 @@ package ru.topbun.features.resetPassword
 
 import features.resetPassword.entity.ResetPasswordConfirmReceive
 import features.resetPassword.entity.ResetPasswordRequestReceive
+import features.senderMessage.SenderMessageManager
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -11,7 +12,6 @@ import models.verification.VerificationTable
 import models.verification.VerificationType
 import ru.topbun.features.confirmAccount.entity.VerificationStatusResponse
 import ru.topbun.features.confirmAccount.entity.VerificationStatusType
-import features.senderMessage.SenderMessageController
 import ru.topbun.models.user.UserTable
 import ru.topbun.utills.AppException
 import ru.topbun.utills.ErrorMessage
@@ -30,7 +30,7 @@ class ResetPasswordController(
                 ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
             val code = VerificationTable.getOrCreateVerificationCode(user.id, VerificationType.RESET_PASSWORD)
 
-            val sender = SenderMessageController()
+            val sender = SenderMessageManager()
             sender.sendVerificationMessage(request.email, code.code)
 
             call.respond(HttpStatusCode.OK)

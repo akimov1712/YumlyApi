@@ -5,6 +5,9 @@ import models.verification.VerificationTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.topbun.models.ingredient.IngredientTable
+import ru.topbun.models.recipe.RecipeTable
+import ru.topbun.models.step.StepTable
 import ru.topbun.models.user.UserTable
 import ru.topbun.utills.Env
 
@@ -16,6 +19,6 @@ fun Application.configureDatabases() {
         password = Env["DATABASE_PASSWORD"],
     )
     transaction {
-        SchemaUtils.create(UserTable, VerificationTable)
+        SchemaUtils.create(UserTable, VerificationTable, StepTable, IngredientTable, RecipeTable)
     }
 }
