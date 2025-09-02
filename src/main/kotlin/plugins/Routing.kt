@@ -10,11 +10,11 @@ import ru.topbun.features.recipe.configureRecipeRouting
 import ru.topbun.features.resetPassword.configureResetPasswordRouting
 
 fun Application.configureRouting() {
-    configureSignUpRouting()
     configureAccountRouting()
-    configureLoginRouting()
-    configureUploadRouting()
     configureConfirmAccountRouting()
-    configureResetPasswordRouting()
+    configureLoginRouting()
     configureRecipeRouting()
+    configureResetPasswordRouting()
+    configureSignUpRouting()
+    configureUploadRouting()
 }
