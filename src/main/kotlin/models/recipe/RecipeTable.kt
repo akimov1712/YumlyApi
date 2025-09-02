@@ -43,7 +43,7 @@ object RecipeTable: IntIdTable("recipes") {
             it[RecipeTable.smallImage] = recipe.previewUrl
             it[RecipeTable.kcal] = recipe.kcal
             it[RecipeTable.cookingTime] = recipe.cookingTime
-            it[RecipeTable.difficulty] = recipe.difficulty.toString()
+            it[RecipeTable.difficulty] = Difficulty.calculateDifficulty(recipe.cookingTime, recipe.ingredients.count()).toString()
             it[RecipeTable.protein] = recipe.protein
             it[RecipeTable.fat] = recipe.fat
             it[RecipeTable.carb] = recipe.carb
@@ -60,7 +60,7 @@ object RecipeTable: IntIdTable("recipes") {
     }
 
     fun deleteRecipe(id: Int) = transaction {
-        FavoriteTable.deleteFavorite(id)
+        FavoriteTable.deleteRecipe(id)
         StepTable.deleteSteps(id)
         IngredientTable.deleteIngredients(id)
         RecipeToCategoryTable.deleteCategory(id)
@@ -69,8 +69,8 @@ object RecipeTable: IntIdTable("recipes") {
         RecipeTable.deleteWhere { RecipeTable.id eq id }
     }
 
-    fun getRecipeWithId(id: Int) = transaction {
-        selectAll().where { RecipeTable.id eq id }.first().toRecipe()
+    fun getRecipeWithId(id: Int, requestUserId: Int? = null) = transaction {
+        selectAll().where { RecipeTable.id eq id }.first().toRecipe(requestUserId)
     }
 
 
@@ -78,7 +78,8 @@ object RecipeTable: IntIdTable("recipes") {
         q: String = "",
         limit: Int,
         offset: Int,
-        settings: GetRecipeReceive.Settings?
+        settings: GetRecipeReceive.Settings?,
+        requestUserId: Int? = null
     ) = transaction {
         var query = RecipeTable
             .selectAll()
@@ -113,11 +114,12 @@ object RecipeTable: IntIdTable("recipes") {
             }
         }
 
-        query.map { it }
+        query.map { it.toRecipe(requestUserId) }
     }
 
-    private fun ResultRow.toRecipe(): RecipeDTO {
+    private fun ResultRow.toRecipe(requestUserId: Int? = null): RecipeDTO {
         val id = this[id].value
+        val userId = this[userId].value
         val ingredients = IngredientTable.getIngredients(id)
         val steps = StepTable.getSteps(id)
 
@@ -125,14 +127,19 @@ object RecipeTable: IntIdTable("recipes") {
         val diets = RecipeToDietsTable.getTag(id)
         val preparation = RecipeToPreparationTable.getTag(id)
 
+        val isFavorite = requestUserId?.let { FavoriteTable.isFavorite(it, id) } ?: false
+
+
         return RecipeDTO(
             id = id,
-            author = UserTable.getUser(this[userId].value).toProfile(),
+            author = UserTable.getUser(userId).toProfile(),
             title = this[title],
             description = this[description],
             largeImage = this[smallImage],
             smallImage = this[largeImage],
             cookingTime = this[cookingTime],
+            isFavorite = isFavorite,
+            difficulty = Difficulty.valueOf(this[difficulty]),
             kcal = this[kcal],
             protein = this[protein],
             fat = this[fat],
