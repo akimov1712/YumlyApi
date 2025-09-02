@@ -2,8 +2,10 @@ package models.tag.diets
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.topbun.models.recipe.RecipeTable
 import ru.topbun.models.tag.categories.RecipeToCategoryTable.categoryId
@@ -14,6 +16,9 @@ object RecipeToDietsTable: IntIdTable("recipe_to_diets") {
     val recipeId = reference("recipe_id", RecipeTable)
     val dietsId = reference("diets_id", DietsTable)
 
+    fun recipeContainTag(recipeId: Int, tagId: Int) = transaction {
+        selectAll().where { (RecipeToDietsTable.recipeId eq recipeId) and (dietsId eq tagId) }.count() > 0
+    }
 
     fun deleteDiets(recipeId: Int) = transaction { deleteWhere { RecipeToDietsTable.recipeId eq recipeId } }
 

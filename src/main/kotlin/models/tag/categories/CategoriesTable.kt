@@ -1,10 +1,11 @@
 package ru.topbun.models.tag.categories
 
+import TagDTO
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import ru.topbun.models.category.TagDTO
+import ru.topbun.models.tag.TagType
 
 object CategoriesTable: IntIdTable("categories"){
     val name = text("name")
@@ -16,6 +17,7 @@ object CategoriesTable: IntIdTable("categories"){
 
     private fun ResultRow.toDTO() = TagDTO(
         id = this[id].value,
+        type = TagType.Category,
         name = this[name],
         icon = this[icon]
     )

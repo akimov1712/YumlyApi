@@ -12,6 +12,10 @@ fun Application.configureRecipeRouting(){
                 val controller = RecipeController(call)
                 controller.getRecipes()
             }
+            get("/favorite"){
+                val controller = RecipeController(call)
+                controller.getFavoriteRecipe()
+            }
         }
     }
 }

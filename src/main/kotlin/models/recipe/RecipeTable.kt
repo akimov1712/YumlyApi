@@ -5,12 +5,15 @@ import models.tag.preparation.RecipeToPreparationTable
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.topbun.features.recipe.entity.AddRecipeReceive
+import ru.topbun.features.recipe.entity.GetRecipeReceive
 import ru.topbun.models.favorite.FavoriteTable
 import ru.topbun.models.ingredient.IngredientTable
 import ru.topbun.models.step.StepTable
@@ -71,10 +74,46 @@ object RecipeTable: IntIdTable("recipes") {
     }
 
 
-    fun getRecipes(q: String, limit: Int, offset: Int) = transaction {
-        selectAll().limit(count = limit).offset(start = offset.toLong()).where {
-            (title.lowerCase() like "%${q.lowercase()}%")
+    fun getRecipes(
+        q: String = "",
+        limit: Int,
+        offset: Int,
+        settings: GetRecipeReceive.Settings?
+    ) = transaction {
+        var query = RecipeTable
+            .selectAll()
+            .limit(limit)
+            .offset(offset.toLong())
+            .apply {
+                andWhere { RecipeTable.title.lowerCase() like "%${q.lowercase()}%" }
+            }
+
+        settings?.let { s ->
+            s.minKcal?.let { query = query.andWhere { RecipeTable.kcal greaterEq it } }
+            s.maxKcal?.let { query = query.andWhere { RecipeTable.kcal lessEq it } }
+            s.cookingTime?.let { query = query.andWhere { RecipeTable.cookingTime lessEq it } }
+            s.difficulty?.let { query = query.andWhere { RecipeTable.difficulty eq it.name } }
+
+            s.categoryId?.let { categoryId ->
+                query = query.adjustColumnSet {
+                    innerJoin(RecipeToCategoryTable, { RecipeTable.id }, { RecipeToCategoryTable.recipeId })
+                }.andWhere { RecipeToCategoryTable.categoryId eq categoryId }
+            }
+
+            s.dietsId?.let { dietsId ->
+                query = query.adjustColumnSet {
+                    innerJoin(RecipeToDietsTable, { RecipeTable.id }, { RecipeToDietsTable.recipeId })
+                }.andWhere { RecipeToDietsTable.dietsId eq dietsId }
+            }
+
+            s.preparationId?.let { prepId ->
+                query = query.adjustColumnSet {
+                    innerJoin(RecipeToPreparationTable, { RecipeTable.id }, { RecipeToPreparationTable.recipeId })
+                }.andWhere { RecipeToPreparationTable.preparationId eq prepId }
+            }
         }
+
+        query.map { it }
     }
 
     private fun ResultRow.toRecipe(): RecipeDTO {

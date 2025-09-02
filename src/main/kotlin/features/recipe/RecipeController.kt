@@ -4,8 +4,10 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
 import ru.topbun.features.recipe.entity.GetRecipeReceive
+import ru.topbun.models.favorite.FavoriteTable
 import ru.topbun.models.history.HistoryTable
 import ru.topbun.models.recipe.RecipeTable
+import ru.topbun.utills.getUserFromToken
 import ru.topbun.utills.wrapperException
 
 class RecipeController(
@@ -18,6 +20,16 @@ class RecipeController(
             HistoryTable.insert(receive.q)
             val recipes = RecipeTable.getRecipes(receive.q, receive.limit, receive.offset)
             call.respond(recipes)
+        }
+    }
+
+    suspend fun getFavoriteRecipe(){
+        call.wrapperException {
+            val user = call.getUserFromToken()
+            val receive = call.receive<GetRecipeReceive>()
+            val favoriteRecipeIds = FavoriteTable.getFavoriteRecipeIds(user.id)
+            val favoriteRecipe = favoriteRecipeIds.map { RecipeTable.getRecipes(limit = receive.limit, offset = receive.offset) }
+            call.respond(favoriteRecipe)
         }
     }
 
