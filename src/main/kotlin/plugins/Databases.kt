@@ -12,10 +12,7 @@ import ru.topbun.models.history.HistoryTable
 import ru.topbun.models.ingredient.IngredientTable
 import ru.topbun.models.recipe.RecipeTable
 import ru.topbun.models.step.StepTable
-import ru.topbun.models.tag.categories.CategoriesTable
 import ru.topbun.models.tag.categories.RecipeToCategoryTable
-import ru.topbun.models.tag.diets.DietsTable
-import ru.topbun.models.tag.preparation.PreparationsTable
 import ru.topbun.models.user.UserTable
 import ru.topbun.utills.Env
 

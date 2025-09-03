@@ -13,9 +13,7 @@ data class GetRecipeReceive(
 
     @Serializable
     data class Settings(
-        val categoryId: Int? = null,
-        val dietsId: Int? = null,
-        val preparationId: Int? = null,
+        val tagIds: List<Int>,
         val cookingTime: Int? = null,
         val minKcal: Int? = null,
         val maxKcal: Int? = null,
