@@ -22,7 +22,7 @@ object RecipeToCategoryTable : IntIdTable("recipe_to_category") {
         transaction { deleteWhere { RecipeToCategoryTable.recipeId eq recipeId } }
 
     fun getTag(recipeId: Int) = transaction {
-        val categoryId = select(categoryId).where { RecipeToCategoryTable.recipeId eq recipeId }.first()[categoryId].value
+        val categoryId = select(categoryId).where { RecipeToCategoryTable.recipeId eq recipeId }.firstOrNull()?.get(categoryId)?.value ?: return@transaction null
         CategoriesTable.getTag(categoryId)
     }
 

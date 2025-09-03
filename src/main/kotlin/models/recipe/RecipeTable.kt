@@ -127,8 +127,9 @@ object RecipeTable: IntIdTable("recipes") {
         val diets = RecipeToDietsTable.getTag(id)
         val preparation = RecipeToPreparationTable.getTag(id)
 
-        val isFavorite = requestUserId?.let { FavoriteTable.isFavorite(it, id) } ?: false
+        val tags = listOfNotNull(category, diets, preparation)
 
+        val isFavorite = requestUserId?.let { FavoriteTable.isFavorite(it, id) } ?: false
 
         return RecipeDTO(
             id = id,
@@ -146,9 +147,7 @@ object RecipeTable: IntIdTable("recipes") {
             carb = this[carb],
             ingredients = ingredients,
             steps = steps,
-            category = category,
-            dietsType = diets,
-            preparation = preparation,
+            tags = tags
         )
     }
 
