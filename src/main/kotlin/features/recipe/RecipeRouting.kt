@@ -11,7 +11,7 @@ import io.ktor.server.routing.routing
 fun Application.configureRecipeRouting() {
     routing {
         authenticate {
-            route("recipe") {
+            route("/recipe") {
                 post {
                     val controller = RecipeController(call)
                     controller.getRecipes()
