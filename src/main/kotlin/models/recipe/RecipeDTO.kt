@@ -21,9 +21,7 @@ data class RecipeDTO(
     val protein: Double,
     val fat: Double,
     val carb: Double,
-    val category: TagDTO?,
-    val dietsType: TagDTO?,
-    val preparation: TagDTO?,
+    val tags: List<TagDTO>,
     val ingredients: List<IngredientDTO>,
     val steps: List<StepDTO>,
 )

@@ -20,9 +20,7 @@ data class AddRecipeReceive(
     val carb: Double,
     val ingredients: List<IngredientDTO>,
     val steps: List<StepDTO>,
-    val categoryId: Int?,
-    val dietsTypeId: Int?,
-    val preparationId: Int?,
+    val tagIds: List<Int>,
 ){
 
     fun isValid(): Boolean{
