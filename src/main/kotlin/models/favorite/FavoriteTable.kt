@@ -7,12 +7,13 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.topbun.models.recipe.RecipeTable
 import ru.topbun.models.user.UserTable
 
 object FavoriteTable: IntIdTable("favorite") {
 
     val userId = reference("user_id", UserTable)
-    val recipeId = reference("recipe_id", UserTable)
+    val recipeId = reference("recipe_id", RecipeTable)
 
     fun getFavoriteRecipeIds(userId: Int) = transaction {
         selectAll().where { FavoriteTable.userId eq userId }.map { it[FavoriteTable.recipeId].value }
