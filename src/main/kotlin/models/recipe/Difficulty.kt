@@ -2,7 +2,7 @@ package ru.topbun.models.recipe
 
 enum class Difficulty {
 
-    Easy, Normal, Hard;
+        Easy, Normal, Hard;
 
     companion object{
         fun calculateDifficulty(time: Int, countIngredients: Int): Difficulty {

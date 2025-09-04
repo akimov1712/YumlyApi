@@ -1,13 +1,10 @@
 package ru.topbun.models.recipe
 
-import models.tag.diets.RecipeToDietsTable
-import models.tag.preparation.RecipeToPreparationTable
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.selectAll
@@ -17,7 +14,7 @@ import ru.topbun.features.recipe.entity.GetRecipeReceive
 import ru.topbun.models.favorite.FavoriteTable
 import ru.topbun.models.ingredient.IngredientTable
 import ru.topbun.models.step.StepTable
-import ru.topbun.models.tag.categories.RecipeToCategoryTable
+import ru.topbun.models.tag.TagToRecipeTable
 import ru.topbun.models.user.UserTable
 
 object RecipeTable: IntIdTable("recipes") {
@@ -52,9 +49,7 @@ object RecipeTable: IntIdTable("recipes") {
         IngredientTable.addIngredient(id, recipe.ingredients)
         StepTable.addStep(id, recipe.steps)
 
-        recipe.categoryId?.let { RecipeToCategoryTable.addRecipe(id, it) }
-        recipe.dietsTypeId?.let { RecipeToDietsTable.addRecipe(id, it) }
-        recipe.preparationId?.let { RecipeToPreparationTable.addRecipe(id, it) }
+        recipe.tagIds.forEach { TagToRecipeTable.addTagToRecipe(id, it) }
 
         getRecipeWithId(id)
     }
@@ -63,9 +58,7 @@ object RecipeTable: IntIdTable("recipes") {
         FavoriteTable.deleteRecipe(id)
         StepTable.deleteSteps(id)
         IngredientTable.deleteIngredients(id)
-        RecipeToCategoryTable.deleteCategory(id)
-        RecipeToDietsTable.deleteDiets(id)
-        RecipeToPreparationTable.deletePreparation(id)
+        TagToRecipeTable.delete(id)
         RecipeTable.deleteWhere { RecipeTable.id eq id }
     }
 
@@ -78,7 +71,7 @@ object RecipeTable: IntIdTable("recipes") {
         q: String = "",
         limit: Int,
         offset: Int,
-        settings: GetRecipeReceive.Settings?,
+        recipeFilter: GetRecipeReceive.RecipeFilter?,
         requestUserId: Int? = null
     ) = transaction {
         var query = RecipeTable
@@ -89,32 +82,16 @@ object RecipeTable: IntIdTable("recipes") {
                 andWhere { RecipeTable.title.lowerCase() like "%${q.lowercase()}%" }
             }
 
-        settings?.let { s ->
+        recipeFilter?.let { s ->
             s.minKcal?.let { query = query.andWhere { RecipeTable.kcal greaterEq it } }
             s.maxKcal?.let { query = query.andWhere { RecipeTable.kcal lessEq it } }
             s.cookingTime?.let { query = query.andWhere { RecipeTable.cookingTime lessEq it } }
             s.difficulty?.let { query = query.andWhere { RecipeTable.difficulty eq it.name } }
-
-            s.categoryId?.let { categoryId ->
-                query = query.adjustColumnSet {
-                    innerJoin(RecipeToCategoryTable, { RecipeTable.id }, { RecipeToCategoryTable.recipeId })
-                }.andWhere { RecipeToCategoryTable.categoryId eq categoryId }
-            }
-
-            s.dietsId?.let { dietsId ->
-                query = query.adjustColumnSet {
-                    innerJoin(RecipeToDietsTable, { RecipeTable.id }, { RecipeToDietsTable.recipeId })
-                }.andWhere { RecipeToDietsTable.dietsId eq dietsId }
-            }
-
-            s.preparationId?.let { prepId ->
-                query = query.adjustColumnSet {
-                    innerJoin(RecipeToPreparationTable, { RecipeTable.id }, { RecipeToPreparationTable.recipeId })
-                }.andWhere { RecipeToPreparationTable.preparationId eq prepId }
-            }
         }
 
-        query.map { it.toRecipe(requestUserId) }
+        query.map { it.toRecipe(requestUserId) }.filter { recipe ->
+            recipeFilter?.tagIds?.let { TagToRecipeTable.recipeContainTag(recipe.id, it) } ?: true
+        }
     }
 
     private fun ResultRow.toRecipe(requestUserId: Int? = null): RecipeDTO {
@@ -123,12 +100,9 @@ object RecipeTable: IntIdTable("recipes") {
         val ingredients = IngredientTable.getIngredients(id)
         val steps = StepTable.getSteps(id)
 
-        val category = RecipeToCategoryTable.getTag(id)
-        val diets = RecipeToDietsTable.getTag(id)
-        val preparation = RecipeToPreparationTable.getTag(id)
+        val tags = TagToRecipeTable.getTags(id)
 
         val isFavorite = requestUserId?.let { FavoriteTable.isFavorite(it, id) } ?: false
-
 
         return RecipeDTO(
             id = id,
@@ -146,9 +120,7 @@ object RecipeTable: IntIdTable("recipes") {
             carb = this[carb],
             ingredients = ingredients,
             steps = steps,
-            category = category,
-            dietsType = diets,
-            preparation = preparation,
+            tags = tags
         )
     }
 

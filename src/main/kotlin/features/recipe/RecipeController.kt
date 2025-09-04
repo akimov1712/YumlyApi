@@ -23,15 +23,15 @@ class RecipeController(
     suspend fun getRecipes(){
         call.wrapperException {
             val receive = call.receive<GetRecipeReceive>()
-            HistoryTable.insert(receive.q)
+            if (receive.q.length > 2){ HistoryTable.insert(receive.q) }
 
             val tokenPrincipal = call.principal<JWTPrincipal>()
             if(tokenPrincipal == null){
-                val recipe = RecipeTable.getRecipes(receive.q, receive.limit, receive.offset, settings = receive.settings)
+                val recipe = RecipeTable.getRecipes(receive.q, receive.limit, receive.offset, recipeFilter = receive.recipeFilter)
                 call.respond(recipe)
             } else {
                 val user = call.getUserFromToken()
-                val recipe = RecipeTable.getRecipes(receive.q, receive.limit, receive.offset, settings = receive.settings, requestUserId = user.id)
+                val recipe = RecipeTable.getRecipes(receive.q, receive.limit, receive.offset, recipeFilter = receive.recipeFilter, requestUserId = user.id)
                 call.respond(recipe)
             }
         }
@@ -42,7 +42,7 @@ class RecipeController(
             val user = call.getUserFromToken()
             val receive = call.receive<GetRecipeReceive>()
             val favoriteRecipeIds = FavoriteTable.getFavoriteRecipeIds(user.id)
-            val favoriteRecipe = favoriteRecipeIds.map { RecipeTable.getRecipes(limit = receive.limit, offset = receive.offset, settings = receive.settings, requestUserId = user.id) }
+            val favoriteRecipe = favoriteRecipeIds.map { RecipeTable.getRecipes(limit = receive.limit, offset = receive.offset, recipeFilter = receive.recipeFilter, requestUserId = user.id) }
             call.respond(favoriteRecipe)
         }
     }
