@@ -5,7 +5,6 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.selectAll
@@ -72,7 +71,7 @@ object RecipeTable: IntIdTable("recipes") {
         q: String = "",
         limit: Int,
         offset: Int,
-        settings: GetRecipeReceive.Settings?,
+        recipeFilter: GetRecipeReceive.RecipeFilter?,
         requestUserId: Int? = null
     ) = transaction {
         var query = RecipeTable
@@ -83,7 +82,7 @@ object RecipeTable: IntIdTable("recipes") {
                 andWhere { RecipeTable.title.lowerCase() like "%${q.lowercase()}%" }
             }
 
-        settings?.let { s ->
+        recipeFilter?.let { s ->
             s.minKcal?.let { query = query.andWhere { RecipeTable.kcal greaterEq it } }
             s.maxKcal?.let { query = query.andWhere { RecipeTable.kcal lessEq it } }
             s.cookingTime?.let { query = query.andWhere { RecipeTable.cookingTime lessEq it } }
@@ -91,7 +90,7 @@ object RecipeTable: IntIdTable("recipes") {
         }
 
         query.map { it.toRecipe(requestUserId) }.filter { recipe ->
-            settings?.tagIds?.let { TagToRecipeTable.recipeContainTag(recipe.id, it) } ?: true
+            recipeFilter?.tagIds?.let { TagToRecipeTable.recipeContainTag(recipe.id, it) } ?: true
         }
     }
 

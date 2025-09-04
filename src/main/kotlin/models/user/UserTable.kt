@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.update
 
 object UserTable : IntIdTable("users") {
 
-    val username = varchar("username", 24)
+    val username = varchar("username", 64)
     val email = varchar("email", 255).uniqueIndex()
     val password = text("password")
     val photoUrl = text("photo_url").nullable()
