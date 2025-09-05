@@ -41,8 +41,8 @@ class RecipeController(
         call.wrapperException {
             val user = call.getUserFromToken()
             val receive = call.receive<GetRecipeReceive>()
-            val favoriteRecipeIds = FavoriteTable.getFavoriteRecipeIds(user.id)
-            val favoriteRecipe = favoriteRecipeIds.map { RecipeTable.getRecipes(limit = receive.limit, offset = receive.offset, recipeFilter = receive.recipeFilter, requestUserId = user.id) }
+            val favoriteRecipeIds = FavoriteTable.getFavoriteRecipeIds(userId = user.id, limit = receive.limit, offset = receive.offset)
+            val favoriteRecipe = favoriteRecipeIds.map { RecipeTable.getRecipeWithId(it, user.id) }
             call.respond(favoriteRecipe)
         }
     }
