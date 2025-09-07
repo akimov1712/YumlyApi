@@ -19,7 +19,7 @@ object HistoryTable: IntIdTable("history") {
         insert{ it[HistoryTable.q] = q }
     }
 
-    fun getTop5Query(): List<Pair<String, Long>> = transaction {
+    fun getTop5Query(): List<String> = transaction {
         val threeMonthsAgo = LocalDateTime.now().minusMonths(3).toKotlinLocalDateTime()
         val countExpr = HistoryTable.id.count()
 
@@ -28,6 +28,6 @@ object HistoryTable: IntIdTable("history") {
             .groupBy(q)
             .orderBy(countExpr, SortOrder.DESC)
             .limit(5)
-            .map { it[q] to it[countExpr] }
+            .map { it[q] to it[countExpr] }.map { it.first }
     }
 }

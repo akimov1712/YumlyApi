@@ -20,10 +20,6 @@ fun Application.configureRecipeRouting() {
                     val controller = RecipeController(call)
                     controller.getRecipeWithId()
                 }
-                post("/favorite") {
-                    val controller = RecipeController(call)
-                    controller.getFavoriteRecipe()
-                }
                 delete("/{id}") {
                     val controller = RecipeController(call)
                     controller.deleteRecipe()

@@ -1,9 +1,12 @@
 package ru.topbun.features.favorite
 
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
+import ru.topbun.features.recipe.entity.GetRecipeReceive
 import ru.topbun.models.favorite.FavoriteTable
+import ru.topbun.models.recipe.RecipeTable
 import ru.topbun.utills.AppException
 import ru.topbun.utills.ErrorMessage
 import ru.topbun.utills.getUserFromToken
@@ -19,6 +22,17 @@ class FavoriteController(
             val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
             val result = FavoriteTable.switchFavorite(user.id, id)
             call.respond(result)
+        }
+    }
+
+
+    suspend fun getFavoriteRecipe(){
+        call.wrapperException {
+            val user = call.getUserFromToken()
+            val receive = call.receive<GetRecipeReceive>()
+            val favoriteRecipeIds = FavoriteTable.getFavoriteRecipeIds(userId = user.id, limit = receive.limit, offset = receive.offset)
+            val favoriteRecipe = favoriteRecipeIds.map { RecipeTable.getRecipeWithId(it, user.id) }
+            call.respond(favoriteRecipe)
         }
     }
 

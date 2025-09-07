@@ -37,16 +37,6 @@ class RecipeController(
         }
     }
 
-    suspend fun getFavoriteRecipe(){
-        call.wrapperException {
-            val user = call.getUserFromToken()
-            val receive = call.receive<GetRecipeReceive>()
-            val favoriteRecipeIds = FavoriteTable.getFavoriteRecipeIds(userId = user.id, limit = receive.limit, offset = receive.offset)
-            val favoriteRecipe = favoriteRecipeIds.map { RecipeTable.getRecipeWithId(it, user.id) }
-            call.respond(favoriteRecipe)
-        }
-    }
-
     suspend fun deleteRecipe() {
         call.wrapperException {
             val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
