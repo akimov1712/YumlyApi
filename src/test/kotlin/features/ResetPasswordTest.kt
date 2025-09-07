@@ -1,16 +1,16 @@
 package features
 
 import appClient
+import features.resetPassword.entity.ResetPasswordConfirmReceive
+import features.resetPassword.entity.ResetPasswordRequestReceive
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.Test
-import ru.topbun.features.confirmAccount.entity.ConfirmAccountReceive
-import ru.topbun.features.confirmAccount.entity.ConfirmAccountRequestReceive
 import ru.topbun.module
 import kotlin.test.assertEquals
 
-class ConfirmAccount {
+class ResetPasswordTest {
 
     @Test
     fun request() = testApplication {
@@ -18,9 +18,9 @@ class ConfirmAccount {
             module()
         }
 
-        val receive = ConfirmAccountRequestReceive("test@test.ru")
+        val receive = ResetPasswordRequestReceive("test@test.ru")
 
-        appClient.post("/verify/request"){
+        appClient.post("/reset/request"){
             setBody(receive)
         }.apply {
             assertEquals(HttpStatusCode.OK, status)
@@ -33,9 +33,9 @@ class ConfirmAccount {
             module()
         }
 
-        val receive = ConfirmAccountReceive("test@test.ru", "0000")
+        val receive = ResetPasswordConfirmReceive("test@test.ru", "0000", "testtest")
 
-        appClient.post("/verify/confirm"){
+        appClient.post("/reset/confirm"){
             setBody(receive)
         }.apply {
             assertEquals(HttpStatusCode.OK, status)

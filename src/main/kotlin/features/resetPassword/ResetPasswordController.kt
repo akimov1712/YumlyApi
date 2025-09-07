@@ -3,10 +3,10 @@ package ru.topbun.features.resetPassword
 import features.resetPassword.entity.ResetPasswordConfirmReceive
 import features.resetPassword.entity.ResetPasswordRequestReceive
 import features.senderMessage.SenderMessageManager
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.request.receive
-import io.ktor.server.response.respond
-import io.ktor.server.routing.RoutingCall
+import io.ktor.http.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import kotlinx.datetime.toKotlinLocalDateTime
 import models.verification.VerificationTable
 import models.verification.VerificationType
@@ -23,7 +23,7 @@ class ResetPasswordController(
     val call: RoutingCall
 ) {
 
-    suspend fun requestReset() {
+    suspend fun request() {
         call.wrapperException {
             val request = call.receive<ResetPasswordRequestReceive>()
             val user = UserTable.getUser(request.email)
@@ -37,7 +37,7 @@ class ResetPasswordController(
         }
     }
 
-    suspend fun confirmReset() {
+    suspend fun confirm() {
         call.wrapperException {
             val confirm = call.receive<ResetPasswordConfirmReceive>()
             val user = UserTable.getUser(confirm.email)
