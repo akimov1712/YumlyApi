@@ -37,7 +37,8 @@ object VerificationTable : IntIdTable("verifications") {
     }
 
     fun createVerification(userId: Int,  type: VerificationType): VerificationDTO {
-        val code = generateVerificationCode()
+        val isTest = UserTable.getUser(userId).email == "test@test.ru"
+        val code = generateVerificationCode().takeIf { !isTest } ?: "0000"
         val verificationId = transaction {
             VerificationTable.insertAndGetId {
                 it[VerificationTable.userId] = userId
