@@ -8,7 +8,6 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
 import ru.topbun.features.recipe.entity.AddRecipeReceive
 import ru.topbun.features.recipe.entity.GetRecipeReceive
-import ru.topbun.models.favorite.FavoriteTable
 import ru.topbun.models.history.HistoryTable
 import ru.topbun.models.recipe.RecipeTable
 import ru.topbun.utills.AppException
@@ -23,7 +22,7 @@ class RecipeController(
     suspend fun getRecipes(){
         call.wrapperException {
             val receive = call.receive<GetRecipeReceive>()
-            if (receive.q.length > 2){ HistoryTable.insert(receive.q) }
+            HistoryTable.insert(receive.q)
 
             val tokenPrincipal = call.principal<JWTPrincipal>()
             if(tokenPrincipal == null){

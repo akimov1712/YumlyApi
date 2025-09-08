@@ -16,7 +16,9 @@ object HistoryTable: IntIdTable("history") {
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
 
     fun insert(q: String) = transaction {
-        insert{ it[HistoryTable.q] = q }
+        if (q.length > 2){
+            insert{ it[HistoryTable.q] = q }
+        }
     }
 
     fun getTop5Query(): List<String> = transaction {
