@@ -30,8 +30,7 @@ class ResetPasswordController(
                 ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
             val code = VerificationTable.getOrCreateVerificationCode(user.id, VerificationType.RESET_PASSWORD)
 
-            val sender = SenderMessageManager()
-            sender.sendVerificationMessage(request.email, code.code)
+            SenderMessageManager.sendVerificationMessage(request.email, code)
 
             call.respond(HttpStatusCode.OK)
         }

@@ -31,8 +31,7 @@ class ConfirmAccountController(
                 ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
             val code = VerificationTable.getOrCreateVerificationCode(user.id, VerificationType.SIGN_UP_CONFIRM)
 
-            val sender = SenderMessageManager()
-            sender.sendVerificationMessage(requestReceive.email, code.code)
+            SenderMessageManager.sendVerificationMessage(requestReceive.email, code)
 
             call.respond(HttpStatusCode.OK)
         }
