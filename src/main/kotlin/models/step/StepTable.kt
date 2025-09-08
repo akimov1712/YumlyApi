@@ -7,6 +7,7 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.topbun.features.recipe.entity.features.recipe.entity.StepReceive
 import ru.topbun.models.recipe.RecipeTable
 
 object StepTable: IntIdTable("steps") {
@@ -15,7 +16,7 @@ object StepTable: IntIdTable("steps") {
     val description = text("description")
     val previewUrl = text("preview_url").nullable()
 
-    fun addStep(recipeId: Int, step: StepDTO) = transaction {
+    fun addStep(recipeId: Int, step: StepReceive) = transaction {
         insert {
             it[StepTable.recipeId] = recipeId
             it[StepTable.description] = step.description
@@ -23,7 +24,7 @@ object StepTable: IntIdTable("steps") {
         }
     }
 
-    fun addStep(recipeId: Int, steps: List<StepDTO>) = steps.forEach { addStep(recipeId, it) }
+    fun addStep(recipeId: Int, steps: List<StepReceive>) = steps.forEach { addStep(recipeId, it) }
 
 
     fun deleteSteps(recipeId: Int) = transaction {

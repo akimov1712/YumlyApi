@@ -7,6 +7,7 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.topbun.features.recipe.entity.IngredientReceive
 import ru.topbun.models.recipe.RecipeTable
 
 object IngredientTable: IntIdTable("ingredients") {
@@ -15,7 +16,7 @@ object IngredientTable: IntIdTable("ingredients") {
     val name = text("name")
     val value = text("value")
 
-    fun addIngredient(recipeId: Int, ingredient: IngredientDTO) = transaction {
+    fun addIngredient(recipeId: Int, ingredient: IngredientReceive) = transaction {
         insert {
             it[IngredientTable.recipeId] = recipeId
             it[IngredientTable.name] = ingredient.name
@@ -23,7 +24,7 @@ object IngredientTable: IntIdTable("ingredients") {
         }
     }
 
-    fun addIngredient(recipeId: Int, ingredients: List<IngredientDTO>) = ingredients.forEach { addIngredient(recipeId, it) }
+    fun addIngredient(recipeId: Int, ingredients: List<IngredientReceive>) = ingredients.forEach { addIngredient(recipeId, it) }
 
     fun deleteIngredients(recipeId: Int) = transaction {
         deleteWhere { IngredientTable.recipeId eq recipeId }

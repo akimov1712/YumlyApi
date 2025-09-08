@@ -2,14 +2,12 @@ package ru.topbun.features.recipe.entity
 
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.Serializable
-import ru.topbun.models.ingredient.IngredientDTO
-import ru.topbun.models.step.StepDTO
+import ru.topbun.features.recipe.entity.features.recipe.entity.StepReceive
 import ru.topbun.utills.AppException
 import ru.topbun.utills.ErrorMessage
 
 @Serializable
 data class AddRecipeReceive(
-    val id: Int,
     val title: String,
     val description: String?,
     val previewUrl: String?,
@@ -18,8 +16,8 @@ data class AddRecipeReceive(
     val protein: Double,
     val fat: Double,
     val carb: Double,
-    val ingredients: List<IngredientDTO>,
-    val steps: List<StepDTO>,
+    val ingredients: List<IngredientReceive>,
+    val steps: List<StepReceive>,
     val tagIds: List<Int>,
 ){
 

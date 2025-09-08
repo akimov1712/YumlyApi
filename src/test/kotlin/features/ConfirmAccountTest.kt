@@ -1,9 +1,10 @@
 package features
 
 import appClient
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.server.testing.*
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.testApplication
 import org.junit.Test
 import ru.topbun.features.confirmAccount.entity.ConfirmAccountReceive
 import ru.topbun.features.confirmAccount.entity.ConfirmAccountRequestReceive
@@ -11,21 +12,6 @@ import ru.topbun.module
 import kotlin.test.assertEquals
 
 class ConfirmAccountTest {
-
-    @Test
-    fun request() = testApplication {
-        application {
-            module()
-        }
-
-        val receive = ConfirmAccountRequestReceive("test@test.ru")
-
-        appClient.post("/verify/request"){
-            setBody(receive)
-        }.apply {
-            assertEquals(HttpStatusCode.OK, status)
-        }
-    }
 
     @Test
     fun confirm() = testApplication {
@@ -41,6 +27,21 @@ class ConfirmAccountTest {
             assertEquals(HttpStatusCode.OK, status)
         }
 
+    }
+
+    @Test
+    fun request() = testApplication {
+        application {
+            module()
+        }
+
+        val receive = ConfirmAccountRequestReceive("test@test.ru")
+
+        appClient.post("/verify/request"){
+            setBody(receive)
+        }.apply {
+            assertEquals(HttpStatusCode.OK, status)
+        }
     }
 
 }
