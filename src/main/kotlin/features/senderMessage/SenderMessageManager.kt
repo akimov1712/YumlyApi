@@ -42,8 +42,8 @@ object SenderMessageManager {
                 VerificationType.RESET_PASSWORD -> "Сброс пароля в Yumly"
             }
             val subject = when (code.type) {
-                VerificationType.SIGN_UP_CONFIRM -> "Ваш код подтверждения — Yumly"
-                VerificationType.RESET_PASSWORD -> "Код для сброса пароля — Yumly"
+                VerificationType.SIGN_UP_CONFIRM -> "Ваш код подтверждения"
+                VerificationType.RESET_PASSWORD -> "Код для сброса пароля"
             }
             val timeExpires = code.expiresAt.parseToString()
 
