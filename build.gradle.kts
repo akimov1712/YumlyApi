@@ -13,7 +13,7 @@ application {
 
 dependencies {
 
-
+    implementation(libs.sender.gmail)
     implementation(libs.dotenv)
     implementation(libs.exposed.mysql)
     implementation(libs.bcrypt)

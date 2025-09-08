@@ -10,8 +10,10 @@ exposed-mysql = "8.0.23"
 bcrypt = "0.10.2"
 kotlinx-datetime = "0.7.1"
 exposed-datetime = "0.61.0"
+sender-gmail = "2.0.1"
 
 [libraries]
+sender-gmail = { module = "com.sun.mail:jakarta.mail", version.ref = "sender-gmail" }
 dotenv = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "dotenv" }
 exposed-mysql = { module = "mysql:mysql-connector-java", version.ref = "exposed-mysql" }
 bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }

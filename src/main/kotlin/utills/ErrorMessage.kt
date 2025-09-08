@@ -8,6 +8,7 @@ import models.error.ErrorDTO
 data class AppException(val code: HttpStatusCode, override val message: String = "") : Exception()
 
 object ErrorMessage {
+    const val SEND_MESSAGE = "При отправке кода подтверждения произошла ошибка"
     const val VERIFICATION_CODE_NOT_FOUND = "Код подтверждения не найден"
     const val INVALID_CODE_EXPIRED = "Код подтверждения истек, запросите код подтверждения заново"
     const val INVALID_CODE = "Код подтверждения не верный. Попробуйте снова"
