@@ -56,41 +56,45 @@ object SenderMessageManager {
                     body {
                       margin: 0;
                       font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-                      background-color: #121212;
-                      color: #f1f1f1;
-                      padding: 0;
+                      background-color: #f4f4f4;
+                      color: #333333;
+                      padding: 30px;
                     }
                     .wrapper {
-                      padding: 40px 20px;
+                      max-width: 600px;
+                      margin: auto;
+                      background: #ffffff;
+                      border-radius: 10px;
+                      padding: 30px 20px;
                       text-align: center;
+                      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
                     }
                     h1 {
-                      font-size: 24px;
-                      margin-bottom: 30px;
+                      font-size: 22px;
+                      margin-bottom: 20px;
                       font-weight: 600;
-                      color: #ffffff;
+                      color: #111111;
                     }
                     .code {
-                      background-color: #1FCC79;
-                      color: #ffffff;
-                      font-size: 40px;
+                      background-color: #1AA060;
+                      color: #fff;
+                      text-align: center;
+                      font-size: 26px;
                       font-weight: bold;
-                      letter-spacing: 8px;
-                      padding: 20px 40px;
-                      border-radius: 12px;
+                      letter-spacing: 6px;
+                      padding: 8px 16px;
+                      border-radius: 8px;
                       display: inline-block;
-                      margin: 20px 0;
-                      box-shadow: 0 6px 20px rgba(31, 204, 121, 0.4);
+                      margin: 15px 0px 20px;
                     }
                     .info {
-                      margin-top: 25px;
                       font-size: 15px;
-                      color: #bbbbbb;
+                      color: #555555;
                     }
                     .footer {
-                      margin-top: 40px;
+                      margin-top: 25px;
                       font-size: 12px;
-                      color: #666666;
+                      color: #888888;
                     }
                   </style>
                 </head>
@@ -111,9 +115,10 @@ object SenderMessageManager {
             """.trimIndent()
 
             val message = MimeMessage(session).apply {
-                setFrom(InternetAddress(username))
+                setFrom(InternetAddress(username, "Yumly"))
                 setRecipients(Message.RecipientType.TO, InternetAddress.parse(email))
                 this.subject = subject
+                this.sender
                 setContent(htmlContent, "text/html; charset=utf-8")
             }
 
