@@ -5,6 +5,8 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.kotlin.datetime.CurrentDateTime
+import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.topbun.models.recipe.RecipeTable
@@ -14,6 +16,7 @@ object FavoriteTable: IntIdTable("favorite") {
 
     val userId = reference("user_id", UserTable)
     val recipeId = reference("recipe_id", RecipeTable)
+    val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
 
     fun getFavoriteRecipeIds(userId: Int, limit: Int, offset: Int) = transaction {
         selectAll().limit(limit).offset(offset.toLong()).where { FavoriteTable.userId eq userId }.map { it[FavoriteTable.recipeId].value }
