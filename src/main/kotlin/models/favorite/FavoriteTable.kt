@@ -17,15 +17,21 @@ import ru.topbun.models.user.UserTable
 object FavoriteTable: IntIdTable("favorite") {
 
     val userId = reference("user_id", UserTable)
+    val authorId = reference("author_id", UserTable)
     val recipeId = reference("recipe_id", RecipeTable)
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
 
     fun getFavoriteRecipeIds(userId: Int, limit: Int, offset: Int) = transaction {
         selectAll()
-            .orderBy(FollowTable.createdAt, SortOrder.DESC)
             .where { FavoriteTable.userId eq userId }
+            .orderBy(FollowTable.createdAt, SortOrder.DESC)
             .limit(limit).offset(offset.toLong())
             .map { it[FavoriteTable.recipeId].value }
+    }
+
+    fun getCountLikes(authorId: Int) = transaction {
+        selectAll().where { FavoriteTable.authorId eq authorId }.count()
+
     }
 
     fun isFavorite(userId: Int, recipeId: Int) = transaction {
@@ -43,9 +49,11 @@ object FavoriteTable: IntIdTable("favorite") {
     }
 
     private fun addFavorite(userId: Int, recipeId: Int) = transaction {
+        val authorId = RecipeTable.getRecipeWithId(recipeId).author.userId
         insert {
             it[FavoriteTable.userId] = userId
             it[FavoriteTable.recipeId] = recipeId
+            it[FavoriteTable.authorId] = authorId
         }
     }
 

@@ -37,8 +37,8 @@ object NotificationTable: IntIdTable("notifications") {
         }.count() > 0
     }
 
-    fun getNotifications(userId: Int, limit: Int, offset: Int) = transaction {
-        selectAll().where { NotificationTable.userId eq userId }
+    fun getNotifications(initiatorId: Int, limit: Int, offset: Int) = transaction {
+        selectAll().where { NotificationTable.initiatorId eq initiatorId }
             .orderBy(createdAt, SortOrder.DESC)
             .limit(limit).offset(offset.toLong())
             .map { it.toDTO() }

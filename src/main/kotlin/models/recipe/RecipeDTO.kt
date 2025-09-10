@@ -9,7 +9,7 @@ import ru.topbun.models.user.ProfileDTO
 @Serializable
 data class RecipeDTO(
     val id: Int,
-    val author: ProfileDTO?,
+    val author: ProfileDTO,
     val title: String,
     val description: String?,
     val largeImage: String?,

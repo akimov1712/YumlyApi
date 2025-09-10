@@ -7,4 +7,7 @@ data class ProfileDTO(
     val userId: Int,
     val username: String,
     val photoUrl: String?,
+    val countFollowing: Int,
+    val countFollowers: Int,
+    val countLikes: Int,
 )
