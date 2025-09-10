@@ -10,6 +10,7 @@ import ru.topbun.models.gpt.chat.GptChatTable
 import ru.topbun.models.gpt.message.GptMessageTable
 import ru.topbun.models.history.HistoryTable
 import ru.topbun.models.ingredient.IngredientTable
+import ru.topbun.models.notification.NotificationTable
 import ru.topbun.models.recipe.RecipeTable
 import ru.topbun.models.step.StepTable
 import ru.topbun.models.tag.TagTable
@@ -34,7 +35,9 @@ fun Application.configureDatabases() {
             HistoryTable,
             TagTable,
             GptMessageTable,
-            GptChatTable
+            GptChatTable,
+            NotificationTable,
+
         )
     }
 }

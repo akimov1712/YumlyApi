@@ -9,6 +9,7 @@ import ru.topbun.features.favorite.configureFavoriteRouting
 import ru.topbun.features.gpt.configureGptRouting
 import ru.topbun.features.history.configureHistoryRouting
 import ru.topbun.features.login.configureLoginRouting
+import ru.topbun.features.notification.configureNotificationRouting
 import ru.topbun.features.recipe.configureRecipeRouting
 import ru.topbun.features.resetPassword.configureResetPasswordRouting
 
@@ -23,4 +24,5 @@ fun Application.configureRouting() {
     configureHistoryRouting()
     configureFavoriteRouting()
     configureGptRouting()
+    configureNotificationRouting()
 }
