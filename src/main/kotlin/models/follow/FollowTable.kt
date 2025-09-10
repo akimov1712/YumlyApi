@@ -1,6 +1,7 @@
 package ru.topbun.models.follow
 
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
@@ -17,12 +18,26 @@ object FollowTable: IntIdTable("follows") {
     val followingId = reference("following_id", UserTable)
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
 
-    fun getListFollowersIds(followingId: Int) = transaction {
-        selectAll().where{ FollowTable.followingId eq followingId }.map { it[FollowTable.followerId].value }
+    fun getFollowersIds(followingId: Int, limit: Int, offset: Int) = transaction {
+        selectAll().where{ FollowTable.followingId eq followingId }
+            .orderBy(createdAt, SortOrder.DESC)
+            .limit(limit).offset(offset.toLong())
+            .map { it[FollowTable.followerId].value }
     }
 
-    fun getListFollowingIds(followerId: Int) = transaction {
-        selectAll().where{ FollowTable.followerId eq followerId }.map { it[FollowTable.followingId].value }
+    fun getFollowingIds(followerId: Int, limit: Int, offset: Int) = transaction {
+        selectAll().where{ FollowTable.followerId eq followerId }
+            .orderBy(createdAt, SortOrder.DESC)
+            .limit(limit).offset(offset.toLong())
+            .map { it[FollowTable.followingId].value }
+    }
+
+    fun getFollowersCount(followingId: Int) = transaction {
+        selectAll().where{ FollowTable.followingId eq followingId }.count()
+    }
+
+    fun getFollowingCount(followerId: Int) = transaction {
+        selectAll().where{ FollowTable.followerId eq followerId }.count()
     }
 
     fun switchFollow(followerId: Int, followingId: Int) = transaction {

@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.topbun.models.favorite.FavoriteTable
+import ru.topbun.models.follow.FollowTable
 import ru.topbun.models.gpt.chat.GptChatTable
 import ru.topbun.models.gpt.message.GptMessageTable
 import ru.topbun.models.history.HistoryTable
@@ -37,7 +38,7 @@ fun Application.configureDatabases() {
             GptMessageTable,
             GptChatTable,
             NotificationTable,
-
+            FollowTable
         )
     }
 }
