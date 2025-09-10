@@ -7,7 +7,7 @@ import ru.topbun.models.gpt.message.GptMessageDTO
 @Serializable
 data class GptChatDTO(
     val id: Int,
-    val title: String,
+    val userId: Int,
     val messages: List<GptMessageDTO>,
     val createdAt: LocalDateTime,
 )

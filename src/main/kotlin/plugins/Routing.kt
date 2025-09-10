@@ -6,6 +6,7 @@ import features.upload.configureUploadRouting
 import io.ktor.server.application.Application
 import ru.topbun.features.confirmAccount.configureConfirmAccountRouting
 import ru.topbun.features.favorite.configureFavoriteRouting
+import ru.topbun.features.gpt.configureGptRouting
 import ru.topbun.features.history.configureHistoryRouting
 import ru.topbun.features.login.configureLoginRouting
 import ru.topbun.features.recipe.configureRecipeRouting
@@ -21,4 +22,5 @@ fun Application.configureRouting() {
     configureUploadRouting()
     configureHistoryRouting()
     configureFavoriteRouting()
+    configureGptRouting()
 }

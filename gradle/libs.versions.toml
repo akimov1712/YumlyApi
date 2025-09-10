@@ -11,6 +11,7 @@ bcrypt = "0.10.2"
 kotlinx-datetime = "0.7.1"
 exposed-datetime = "0.61.0"
 sender-gmail = "2.0.1"
+cio-engine = "2.3.7"
 
 [libraries]
 sender-gmail = { module = "com.sun.mail:jakarta.mail", version.ref = "sender-gmail" }
@@ -24,6 +25,8 @@ ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-engine-cio = { module = "io.ktor:ktor-client-cio", version.ref = "cio-engine" }
+
 
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }

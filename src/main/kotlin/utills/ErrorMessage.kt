@@ -15,6 +15,7 @@ object ErrorMessage {
     const val UNAUTHORIZED = "Пользователь не авторизован"
     const val USER_NOT_FOUND_WITH_EMAIL_PASSWORD = "Пользователь с указанной почтой или паролем не найден"
     const val USER_NOT_FOUND = "Пользователь не найден"
+    const val CHAT_NOT_FOUND = "Чат с таким id не найден"
     const val USER_EXISTS = "Пользователь с такой почтой уже зарегистрирован"
     const val CATEGORY_EXISTS = "Категория с таким именем уже существует"
     const val CATEGORY_NOT_FOUND = "Категория с таким id не найдена"
@@ -39,6 +40,7 @@ object ErrorMessage {
     const val INVALID_IMAGE_FILE = "Недопустимый файл изображения"
     const val NO_FILE_UPLOADED = "Не удалось загрузить файл"
     const val DELETE_RECIPE = "Вы можете удалять только свои рецепты"
+    const val ERROR_GPT_REQUEST = "Произошла ошибка при получении ответа от ассистента."
 }
 
 suspend fun RoutingCall.createError(code: HttpStatusCode, errorMessage: String = "") =

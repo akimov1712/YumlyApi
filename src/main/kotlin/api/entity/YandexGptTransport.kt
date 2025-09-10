@@ -1,7 +1,6 @@
 package ru.topbun.api.entity
 
 import kotlinx.serialization.Serializable
-import ru.topbun.models.gpt.message.GptMessageDTO
 import ru.topbun.utills.Env
 
 @Serializable
@@ -10,3 +9,8 @@ data class YandexGptTransport(
     val completionOptions: CompletionOptions = CompletionOptions(),
     val messages: List<GptMessageTransport>
 )
+
+fun YandexGptTransport.appendSystemRoleMessage(): YandexGptTransport {
+    val newMessages = listOf(GptMessageTransport.createSystemRoleMessage()) + this.messages
+    return copy(messages = newMessages)
+}

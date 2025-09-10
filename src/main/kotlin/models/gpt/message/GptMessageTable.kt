@@ -17,12 +17,16 @@ object GptMessageTable: IntIdTable("gpt_messages") {
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
 
     fun addMessage(chatId: Int, role: GptMessageRoleType, text: String) = transaction {
-        insert {
+        val id = insert {
             it[GptMessageTable.chatId] = chatId
             it[GptMessageTable.role] = role.toString()
             it[GptMessageTable.text] = text
-        }
+        }[GptMessageTable.id].value
+
+        getMessage(id)
     }
+
+    fun getMessage(id: Int) = transaction { selectAll().where{ GptMessageTable.id eq id }.first().toDTO() }
 
     fun getMessages(chatId: Int) = transaction {
         selectAll().where { GptMessageTable.chatId eq chatId }.map { it.toDTO() }
@@ -30,7 +34,7 @@ object GptMessageTable: IntIdTable("gpt_messages") {
 
     private fun ResultRow.toDTO() = GptMessageDTO(
         id = this[id].value,
-        role = GptMessageRoleType.fromString(this[role]),
+        role = GptMessageRoleType.valueOf(this[role]),
         text = this[text],
         createdAt = this[createdAt]
     )
