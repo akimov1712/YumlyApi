@@ -4,7 +4,7 @@ enum class GptMessageRoleType {
 
     SYSTEM, ASSISTANT, USER;
 
-    override fun toString(): String = when(this){
+    fun toLowerString(): String = when(this){
         SYSTEM -> "system"
         ASSISTANT -> "assistant"
         USER -> "user"

@@ -13,7 +13,7 @@ data class GptMessageTransport(
 
     companion object{
         fun createSystemRoleMessage() = GptMessageTransport(
-            role = GptMessageRoleType.SYSTEM.toString(),
+            role = GptMessageRoleType.SYSTEM.toLowerString(),
             text = Env["GPT_SYSTEM_ROLE_TEXT"]
         )
     }
@@ -22,5 +22,5 @@ data class GptMessageTransport(
 
 
 fun List<GptMessageDTO>.toTransport() = map {
-    GptMessageTransport(it.role.toString(), it.text)
+    GptMessageTransport(it.role.toLowerString(), it.text)
 }
