@@ -6,4 +6,4 @@ import kotlinx.serialization.Serializable
 data class IngredientReceive(
     val name: String,
     val value: String,
-    )
+)

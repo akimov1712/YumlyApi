@@ -57,7 +57,7 @@ class GptController(
             val response = api.sendMessage(yandexGptTransport)
             if (response.status != HttpStatusCode.OK) {
                 println(response.bodyAsText())
-                throw AppException(HttpStatusCode.BadRequest, ErrorMessage.ERROR_GPT_REQUEST)
+                throw AppException(HttpStatusCode.BadRequest, ErrorMessage.GPT_REQUEST)
             }
 
             val gptResponse = response.body<YandexGptResponse>()

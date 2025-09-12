@@ -40,7 +40,8 @@ object ErrorMessage {
     const val INVALID_IMAGE_FILE = "Недопустимый файл изображения"
     const val NO_FILE_UPLOADED = "Не удалось загрузить файл"
     const val DELETE_RECIPE = "Вы можете удалять только свои рецепты"
-    const val ERROR_GPT_REQUEST = "Произошла ошибка при получении ответа от ассистента."
+    const val GPT_REQUEST = "Произошла ошибка при получении ответа от ассистента."
+    const val SELF_FOLLOW = "Вы не можете подписаться на самого себя"
 }
 
 suspend fun RoutingCall.createError(code: HttpStatusCode, errorMessage: String = "") =

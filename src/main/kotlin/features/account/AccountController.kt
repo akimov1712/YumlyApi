@@ -1,10 +1,13 @@
 package features.account
 
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.RoutingCall
 import ru.topbun.features.account.entity.UpdateAccountInfoReceive
 import ru.topbun.models.user.UserTable
+import ru.topbun.utills.AppException
+import ru.topbun.utills.ErrorMessage
 import ru.topbun.utills.getUserFromToken
 import ru.topbun.utills.wrapperException
 
@@ -16,6 +19,14 @@ class AccountController(
         call.wrapperException{
             val user = call.getUserFromToken()
             call.respond(user)
+        }
+    }
+
+    suspend fun profileInfo(){
+        call.wrapperException {
+            val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
+            val profile = UserTable.getUser(id).toProfile()
+            call.respond(profile)
         }
     }
 

@@ -21,7 +21,7 @@ object NotificationTable: IntIdTable("notifications") {
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
 
     fun addNotification(userId: Int, type: NotificationType, initiatorId: Int, recipeId: Int? = null) = transaction {
-        if (!containNotification(userId, type, initiatorId)){
+        if (!containNotification(userId, type, initiatorId, recipeId)){
             insert {
                 it[NotificationTable.userId] = userId
                 it[NotificationTable.type] = type.toString()
@@ -31,9 +31,9 @@ object NotificationTable: IntIdTable("notifications") {
         }
     }
 
-    fun containNotification(userId: Int, type: NotificationType, initiatorId: Int) = transaction {
+    fun containNotification(userId: Int, type: NotificationType, initiatorId: Int, recipeId: Int? = null) = transaction {
         selectAll().where {
-            (NotificationTable.userId eq userId) and (NotificationTable.type eq type.toString()) and (NotificationTable.initiatorId eq initiatorId)
+            (NotificationTable.userId eq userId) and (NotificationTable.type eq type.toString()) and (NotificationTable.initiatorId eq initiatorId) and (NotificationTable.recipeId eq recipeId)
         }.count() > 0
     }
 

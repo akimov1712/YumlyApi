@@ -10,7 +10,6 @@ import org.jetbrains.exposed.sql.kotlin.datetime.CurrentDateTime
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import ru.topbun.models.follow.FollowTable
 import ru.topbun.models.recipe.RecipeTable
 import ru.topbun.models.user.UserTable
 
@@ -21,12 +20,13 @@ object FavoriteTable: IntIdTable("favorite") {
     val recipeId = reference("recipe_id", RecipeTable)
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
 
-    fun getFavoriteRecipeIds(userId: Int, limit: Int, offset: Int) = transaction {
+    fun getFavoriteRecipes(userId: Int, limit: Int, offset: Int) = transaction {
         selectAll()
             .where { FavoriteTable.userId eq userId }
-            .orderBy(FollowTable.createdAt, SortOrder.DESC)
+            .orderBy(FavoriteTable.createdAt, SortOrder.DESC)
             .limit(limit).offset(offset.toLong())
-            .map { it[FavoriteTable.recipeId].value }
+            .map { it[recipeId].value }
+            .map { RecipeTable.getRecipeWithId(it, userId) }
     }
 
     fun getCountLikes(authorId: Int) = transaction {

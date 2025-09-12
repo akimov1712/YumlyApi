@@ -23,6 +23,7 @@ data class UserDTO(
             userId = id,
             username = username,
             photoUrl = photoUrl,
+            email = email,
             countFollowing = FollowTable.getFollowingCount(id).toInt(),
             countFollowers = FollowTable.getFollowersCount(id).toInt(),
             countLikes = FavoriteTable.getCountLikes(id).toInt()

@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetNotificationsReceive(
-    val limit: Int,
-    val offset: Int,
+    val limit: Int = 20,
+    val offset: Int = 0,
 )

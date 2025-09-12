@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class ProfileDTO(
     val userId: Int,
     val username: String,
+    val email: String,
     val photoUrl: String?,
     val countFollowing: Int,
     val countFollowers: Int,
