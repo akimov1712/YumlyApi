@@ -11,6 +11,12 @@ application {
     mainClass = "ru.topbun.ApplicationKt"
 }
 
+ktor {
+    fatJar {
+        archiveFileName.set("yumly-api.jar")
+    }
+}
+
 dependencies {
 
     implementation(libs.sender.gmail)
