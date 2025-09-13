@@ -28,7 +28,8 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "build/libs/yumly-api.jar"
-          target: "~/"
+          target: "/root/"
+          strip_components: 2
           
       - name: Restart service
         run: |
