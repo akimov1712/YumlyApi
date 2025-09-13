@@ -19,7 +19,7 @@ jobs:
           java-version: 21
 
       - name: Build shadowJar
-        run: ./gradlew clean shadowJar
+        run: ./gradlew buildFatJar
 
       - name: Copy jar to server
         uses: appleboy/scp-action@v0.1.7
@@ -28,7 +28,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "build/libs/yumly-api.jar"
-          target: "/yumly-api.jar"
+          target: "~/yumly-api.jar"
 
       - name: Restart service
         uses: appleboy/ssh-action@v1.2.0
