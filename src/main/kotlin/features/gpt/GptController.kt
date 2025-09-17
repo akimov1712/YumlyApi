@@ -16,6 +16,7 @@ import ru.topbun.models.gpt.chat.GptChatTable
 import ru.topbun.models.gpt.message.GptMessageRoleType
 import ru.topbun.models.gpt.message.GptMessageTable
 import ru.topbun.utills.AppException
+import ru.topbun.utills.Env
 import ru.topbun.utills.ErrorMessage
 import ru.topbun.utills.getUserFromToken
 import ru.topbun.utills.wrapperException
@@ -28,7 +29,7 @@ class GptController(
         call.wrapperException {
             val user = call.getUserFromToken()
             val receive = call.receive<GetChatsReceive>()
-            val chats = GptChatTable.getChats(userId = user.id, limit = receive.limit, offset = receive.offset)
+            val chats = GptChatTable.getChats(userId = user.id, limit = receive.limit, offset = receive.offset).map { it.toResponse() }
             call.respond(chats)
         }
     }
@@ -39,7 +40,7 @@ class GptController(
             val chatId = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
             val chat = GptChatTable.getChat(chatId) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.CHAT_NOT_FOUND)
             if (user.id != chat.userId) throw AppException(HttpStatusCode.Forbidden, ErrorMessage.FORBIDDEN)
-            call.respond(chat)
+            call.respond(chat.toResponse())
         }
     }
 
@@ -53,11 +54,12 @@ class GptController(
             GptMessageTable.addMessage(chatId, GptMessageRoleType.USER, receive.text)
 
             val messages = GptMessageTable.getMessages(chatId)
+            if (messages.count() > Env["GPT_MAX_MESSAGE"].toInt()) throw AppException(HttpStatusCode.BadRequest, ErrorMessage.GPT_MAX_MESSAGE)
             val yandexGptTransport = YandexGptTransport(messages = messages.toTransport())
             val response = api.sendMessage(yandexGptTransport)
             if (response.status != HttpStatusCode.OK) {
                 println(response.bodyAsText())
-                throw AppException(HttpStatusCode.BadRequest, ErrorMessage.GPT_REQUEST)
+                throw AppException(HttpStatusCode.BadRequest, ErrorMessage.ERROR_GPT_REQUEST)
             }
 
             val gptResponse = response.body<YandexGptResponse>()
@@ -65,7 +67,7 @@ class GptController(
             GptMessageTable.addMessage(chatId = chatId, role = GptMessageRoleType.fromString(assistantMessage.role), assistantMessage.text)
 
             val chat = GptChatTable.getChat(chatId) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.CHAT_NOT_FOUND)
-            call.respond(chat)
+            call.respond(chat.toResponse())
         }
     }
 

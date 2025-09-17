@@ -8,6 +8,7 @@ import models.error.ErrorDTO
 data class AppException(val code: HttpStatusCode, override val message: String = "") : Exception()
 
 object ErrorMessage {
+    const val GPT_MAX_MESSAGE = "Превышен лимит сообщений в чате"
     const val SEND_MESSAGE = "При отправке кода подтверждения произошла ошибка"
     const val VERIFICATION_CODE_NOT_FOUND = "Код подтверждения не найден"
     const val INVALID_CODE_EXPIRED = "Код подтверждения истек, запросите код подтверждения заново"
@@ -40,8 +41,8 @@ object ErrorMessage {
     const val INVALID_IMAGE_FILE = "Недопустимый файл изображения"
     const val NO_FILE_UPLOADED = "Не удалось загрузить файл"
     const val DELETE_RECIPE = "Вы можете удалять только свои рецепты"
-    const val GPT_REQUEST = "Произошла ошибка при получении ответа от ассистента."
     const val SELF_FOLLOW = "Вы не можете подписаться на самого себя"
+    const val ERROR_GPT_REQUEST = "Произошла ошибка при получении ответа от ассистента."
 }
 
 suspend fun RoutingCall.createError(code: HttpStatusCode, errorMessage: String = "") =
