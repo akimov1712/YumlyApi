@@ -18,7 +18,7 @@ data class UserDTO(
     val updatedAt: LocalDateTime,
 ){
 
-    fun toProfile(): ProfileDTO {
+    fun toProfile(requestUserId: Int?): ProfileDTO {
         return ProfileDTO(
             userId = id,
             username = username,
@@ -26,7 +26,8 @@ data class UserDTO(
             email = email,
             countFollowing = FollowTable.getFollowingCount(id).toInt(),
             countFollowers = FollowTable.getFollowersCount(id).toInt(),
-            countLikes = FavoriteTable.getCountLikes(id).toInt()
+            countLikes = FavoriteTable.getCountLikes(id).toInt(),
+            isFollow = requestUserId?.let { FollowTable.isFollowed(requestUserId, id) } ?: false
         )
     }
 
