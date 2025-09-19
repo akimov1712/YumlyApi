@@ -110,7 +110,7 @@ object RecipeTable: IntIdTable("recipes") {
 
         return RecipeDTO(
             id = id,
-            author = UserTable.getUser(userId).toProfile(),
+            author = UserTable.getUser(userId).toProfile(requestUserId),
             title = this[title],
             description = this[description],
             largeImage = this[smallImage],

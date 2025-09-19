@@ -11,4 +11,5 @@ data class ProfileDTO(
     val countFollowing: Int,
     val countFollowers: Int,
     val countLikes: Int,
+    val isFollow: Boolean
 )

@@ -1,6 +1,8 @@
 package features.account
 
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
@@ -24,8 +26,10 @@ class AccountController(
 
     suspend fun profileInfo(){
         call.wrapperException {
+            val tokenPrincipal = call.principal<JWTPrincipal>()
+            val userId = call.getUserFromToken().takeIf { tokenPrincipal != null }?.id
             val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
-            val profile = UserTable.getUser(id).toProfile()
+            val profile = UserTable.getUser(id).toProfile(userId)
             call.respond(profile)
         }
     }
