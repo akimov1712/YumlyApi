@@ -1,4 +1,4 @@
-<img alt="Banner" src="https://raw.githubusercontent.com/akimov1712/YumlyApi/refs/heads/assets/.github/assets/banner.png">
+<img alt="Banner" src="https://raw.githubusercontent.com/akimov1712/YumlyApi/refs/heads/release/.github/workflows/banner.png">
 
 # Yumly API
 
