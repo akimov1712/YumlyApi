@@ -1,10 +1,9 @@
-package features.resetPassword.entity
+package ru.topbun.features.account.entity
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ResetPasswordConfirmReceive(
+data class ResetPasswordReceive(
     val email: String,
-    val code: String,
     val newPassword: String
 )

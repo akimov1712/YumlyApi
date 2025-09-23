@@ -35,17 +35,17 @@ object SenderMessageManager {
         }
     })
 
-    suspend fun sendVerificationMessage(email: String, code: VerificationDTO) {
+    suspend fun sendVerificationMessage(email: String, verification: VerificationDTO) {
         try {
-            val title = when (code.type) {
+            val title = when (verification.type) {
                 VerificationType.SIGN_UP_CONFIRM -> "Добро пожаловать в Yumly!"
                 VerificationType.RESET_PASSWORD -> "Сброс пароля в Yumly"
             }
-            val subject = when (code.type) {
+            val subject = when (verification.type) {
                 VerificationType.SIGN_UP_CONFIRM -> "Ваш код подтверждения"
                 VerificationType.RESET_PASSWORD -> "Код для сброса пароля"
             }
-            val timeExpires = code.expiresAt.parseToString()
+            val timeExpires = verification.expiresAt.parseToString()
 
             val htmlContent = """
                 <!DOCTYPE html>
@@ -101,7 +101,7 @@ object SenderMessageManager {
                 <body>
                   <div class="wrapper">
                     <h1>$title</h1>
-                    <div class="code">${code.code}</div>
+                    <div class="code">${verification.code}</div>
                     <div class="info">
                       Код действителен до <b>$timeExpires</b><br/>
                       Никому его не сообщайте.
