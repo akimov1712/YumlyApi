@@ -9,6 +9,7 @@ data class VerificationDTO(
     val id: Int,
     val userId: Int,
     val code: String,
+    val confirmed : Boolean,
     val type: VerificationType,
     val expiresAt: LocalDateTime
 )

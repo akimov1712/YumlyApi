@@ -22,6 +22,10 @@ fun Route.configureAccountRouting(){
                     accountController.updateInfo()
                 }
             }
+            put("/reset-password"){
+                val accountController = AccountController(call)
+                accountController.resetPassword()
+            }
         }
         route("/profile"){
             get("/info/{id}"){
