@@ -36,7 +36,7 @@ class FollowController(
             val followersIds = FollowTable.getFollowersIds(receive.followId, receive.limit, receive.offset)
             val followResponse = FollowersResponse(
                 count = FollowTable.getFollowersCount(receive.followId).toInt(),
-                follows = followersIds.map { UserTable.getUser(it) }
+                follows = followersIds.map { UserTable.getUser(it).toProfile() }
             )
             call.respond(followResponse)
         }
@@ -48,7 +48,7 @@ class FollowController(
             val followingIds = FollowTable.getFollowingIds(receive.followId, receive.limit, receive.offset)
             val followResponse = FollowersResponse(
                 count = FollowTable.getFollowingCount(receive.followId).toInt(),
-                follows = followingIds.map { UserTable.getUser(it) }
+                follows = followingIds.map { UserTable.getUser(it).toProfile() }
             )
             call.respond(followResponse)
         }
