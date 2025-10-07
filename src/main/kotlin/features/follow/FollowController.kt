@@ -1,6 +1,8 @@
 package ru.topbun.features.follow
 
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
@@ -32,11 +34,13 @@ class FollowController(
 
     suspend fun getFollowers(){
         call.wrapperException {
+            val tokenPrincipal = call.principal<JWTPrincipal>()
+            val userId = call.getUserFromToken().takeIf { tokenPrincipal != null }?.id
             val receive = call.receive<GetFollowReceive>()
             val followersIds = FollowTable.getFollowersIds(receive.followId, receive.limit, receive.offset)
             val followResponse = FollowersResponse(
                 count = FollowTable.getFollowersCount(receive.followId).toInt(),
-                follows = followersIds.map { UserTable.getUser(it).toProfile() }
+                follows = followersIds.map { UserTable.getUser(it).toProfile(userId) }
             )
             call.respond(followResponse)
         }
@@ -44,11 +48,13 @@ class FollowController(
 
     suspend fun getFollowing(){
         call.wrapperException {
+            val tokenPrincipal = call.principal<JWTPrincipal>()
+            val userId = call.getUserFromToken().takeIf { tokenPrincipal != null }?.id
             val receive = call.receive<GetFollowReceive>()
             val followingIds = FollowTable.getFollowingIds(receive.followId, receive.limit, receive.offset)
             val followResponse = FollowersResponse(
                 count = FollowTable.getFollowingCount(receive.followId).toInt(),
-                follows = followingIds.map { UserTable.getUser(it).toProfile() }
+                follows = followingIds.map { UserTable.getUser(it).toProfile(userId) }
             )
             call.respond(followResponse)
         }
