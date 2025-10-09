@@ -5,6 +5,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
+import ru.topbun.features.account.entity.TokenResponse
 import ru.topbun.models.user.UserTable
 import ru.topbun.utills.AppException
 import ru.topbun.utills.ErrorMessage
@@ -31,7 +32,7 @@ class SignUpController(
                 )
                 val user = UserTable.getUser(signUp.email) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
                 if (user.isVerified){
-                    call.respond(generateToken(user.email))
+                    call.respond(TokenResponse(generateToken(user.email)))
                 } else{
                     call.respond(user)
                 }
