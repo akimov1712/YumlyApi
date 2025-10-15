@@ -55,7 +55,7 @@ object RecipeTable: IntIdTable("recipes") {
 
         recipe.tagIds.forEach { TagToRecipeTable.addTagToRecipe(id, it) }
 
-        getRecipeWithId(id)
+        getRecipeById(id)
     }
 
     fun deleteRecipe(id: Int) = transaction {
@@ -66,8 +66,12 @@ object RecipeTable: IntIdTable("recipes") {
         RecipeTable.deleteWhere { RecipeTable.id eq id }
     }
 
-    fun getRecipeWithId(id: Int, requestUserId: Int? = null) = transaction {
+    fun getRecipeById(id: Int, requestUserId: Int? = null) = transaction {
         selectAll().where { RecipeTable.id eq id }.first().toRecipe(requestUserId)
+    }
+
+    fun getRecipeByUserId(userId: Int) = transaction {
+        selectAll().where { RecipeTable.userId eq userId }.map { it.toRecipe() }
     }
 
 
