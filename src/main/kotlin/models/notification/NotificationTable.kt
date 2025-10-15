@@ -46,7 +46,7 @@ object NotificationTable: IntIdTable("notifications") {
 
 
     private fun ResultRow.toDTO(): NotificationDTO {
-        val recipe = this[recipeId]?.let { RecipeTable.getRecipeWithId(it.value) }
+        val recipe = this[recipeId]?.let { RecipeTable.getRecipeById(it.value) }
         return NotificationDTO(
             id = this[id].value,
             type = NotificationType.valueOf(this[type]),

@@ -26,7 +26,7 @@ object FavoriteTable: IntIdTable("favorite") {
             .orderBy(FavoriteTable.createdAt, SortOrder.DESC)
             .limit(limit).offset(offset.toLong())
             .map { it[recipeId].value }
-            .map { RecipeTable.getRecipeWithId(it, userId) }
+            .map { RecipeTable.getRecipeById(it, userId) }
     }
 
     fun getCountLikes(authorId: Int) = transaction {
@@ -49,7 +49,7 @@ object FavoriteTable: IntIdTable("favorite") {
     }
 
     private fun addFavorite(userId: Int, recipeId: Int) = transaction {
-        val authorId = RecipeTable.getRecipeWithId(recipeId).author.userId
+        val authorId = RecipeTable.getRecipeById(recipeId).author.userId
         insert {
             it[FavoriteTable.userId] = userId
             it[FavoriteTable.recipeId] = recipeId

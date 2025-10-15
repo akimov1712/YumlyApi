@@ -1,14 +1,11 @@
 package ru.topbun.features.recipe
 
-import io.ktor.server.application.Application
 import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.Routing
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import io.ktor.server.routing.routing
 
 fun Route.configureRecipeRouting() {
     authenticate {
@@ -19,7 +16,11 @@ fun Route.configureRecipeRouting() {
             }
             get("/{id}") {
                 val controller = RecipeController(call)
-                controller.getRecipeWithId()
+                controller.getRecipeById()
+            }
+            get("/user/{id}") {
+                val controller = RecipeController(call)
+                controller.getRecipesByUserId()
             }
             delete("/{id}") {
                 val controller = RecipeController(call)

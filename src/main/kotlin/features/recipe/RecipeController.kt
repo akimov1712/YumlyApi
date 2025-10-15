@@ -40,23 +40,23 @@ class RecipeController(
         call.wrapperException {
             val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
             val user = call.getUserFromToken()
-            val recipe = RecipeTable.getRecipeWithId(id)
+            val recipe = RecipeTable.getRecipeById(id)
             if (user.id != recipe.author?.userId) throw AppException(HttpStatusCode.Forbidden, ErrorMessage.DELETE_RECIPE)
             RecipeTable.deleteRecipe(id)
             call.respond(HttpStatusCode.OK)
         }
     }
 
-    suspend fun getRecipeWithId(){
+    suspend fun getRecipeById(){
         call.wrapperException {
             val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
             val tokenPrincipal = call.principal<JWTPrincipal>()
             if(tokenPrincipal == null){
-                val recipe = RecipeTable.getRecipeWithId(id)
+                val recipe = RecipeTable.getRecipeById(id)
                 call.respond(recipe)
             } else {
                 val user = call.getUserFromToken()
-                val recipe = RecipeTable.getRecipeWithId(id, user.id)
+                val recipe = RecipeTable.getRecipeById(id, user.id)
                 call.respond(recipe)
             }
         }
@@ -70,6 +70,14 @@ class RecipeController(
                 val recipe = RecipeTable.addRecipe(user.id, recipeReceive)
                 call.respond(recipe)
             }
+        }
+    }
+
+    suspend fun getRecipesByUserId(){
+        call.wrapperException {
+            val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
+            val recipes = RecipeTable.getRecipeByUserId(id)
+            call.respond(recipes)
         }
     }
 
