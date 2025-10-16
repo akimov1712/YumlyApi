@@ -37,20 +37,20 @@ object NotificationTable: IntIdTable("notifications") {
         }.count() > 0
     }
 
-    fun getNotifications(initiatorId: Int, limit: Int, offset: Int) = transaction {
-        selectAll().where { NotificationTable.initiatorId eq initiatorId }
+    fun getNotifications(userId: Int, limit: Int, offset: Int) = transaction {
+        selectAll().where { NotificationTable.userId eq userId }
             .orderBy(createdAt, SortOrder.DESC)
             .limit(limit).offset(offset.toLong())
-            .map { it.toDTO() }
+            .map { it.toDTO(userId) }
     }
 
 
-    private fun ResultRow.toDTO(): NotificationDTO {
+    private fun ResultRow.toDTO(requestUserId: Int): NotificationDTO {
         val recipe = this[recipeId]?.let { RecipeTable.getRecipeById(it.value) }
         return NotificationDTO(
             id = this[id].value,
             type = NotificationType.valueOf(this[type]),
-            initiator = UserTable.getUser(this[initiatorId].value),
+            initiator = UserTable.getUser(this[initiatorId].value).toProfile(requestUserId),
             recipe = recipe,
             createdAt = this[createdAt]
         )
