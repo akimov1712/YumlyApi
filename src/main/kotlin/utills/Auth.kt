@@ -28,7 +28,7 @@ fun JWTPrincipal?.getEmailOrThrow() = this?.payload?.getClaim(Env["JWT_KEY_EMAIL
 fun RoutingCall.getUserFromToken(): UserDTO {
     val principal = principal<JWTPrincipal>()
     val email = principal.getEmailOrThrow()
-    val user = UserTable.getUser(email) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
+    val user = UserTable.getUser(email) ?: throw AppException(HttpStatusCode.Unauthorized, ErrorMessage.USER_NOT_FOUND)
     if (!user.isVerified) throw AppException(HttpStatusCode.Unauthorized, ErrorMessage.UNAUTHORIZED)
     return user
 }
