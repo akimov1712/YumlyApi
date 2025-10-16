@@ -25,7 +25,7 @@ class FollowController(
         call.wrapperException {
             val user = call.getUserFromToken()
             val followingId = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
-            if (user.id == followingId) throw AppException(HttpStatusCode.BadRequest, ErrorMessage.SELF_FOLLOW)
+            if (user.id == followingId) throw AppException(HttpStatusCode.Conflict, ErrorMessage.SELF_FOLLOW)
             val isFollowed = FollowTable.switchFollow(user.id, followingId)
             if (isFollowed) NotificationTable.addNotification(user.id, NotificationType.FOLLOW, followingId)
             call.respond(isFollowed)
