@@ -15,4 +15,6 @@ data class GptChatDTO(
 
     fun toResponse() = GptChatResponse(chat = this)
 
+    fun compress() = this.copy(messages = messages.take(1))
+
 }
