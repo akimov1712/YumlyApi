@@ -29,7 +29,7 @@ class GptController(
         call.wrapperException {
             val user = call.getUserFromToken()
             val receive = call.receive<GetChatsReceive>()
-            val chats = GptChatTable.getChats(userId = user.id, limit = receive.limit, offset = receive.offset).map { it.toResponse() }
+            val chats = GptChatTable.getChats(userId = user.id, limit = receive.limit, offset = receive.offset).map { it.compress().toResponse() }
             call.respond(chats)
         }
     }
