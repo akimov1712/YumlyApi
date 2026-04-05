@@ -1,8 +1,11 @@
 package ru.topbun.models.recipe
 
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.CustomFunction
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.TextColumnType
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -10,6 +13,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.CurrentDateTime
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.stringLiteral
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.topbun.features.recipe.entity.AddRecipeReceive
 import ru.topbun.features.recipe.entity.GetRecipeReceive
@@ -18,6 +22,7 @@ import ru.topbun.models.ingredient.IngredientTable
 import ru.topbun.models.step.StepTable
 import ru.topbun.models.tag.TagToRecipeTable
 import ru.topbun.models.user.UserTable
+import java.time.LocalDate
 
 object RecipeTable: IntIdTable("recipes") {
 
@@ -82,10 +87,22 @@ object RecipeTable: IntIdTable("recipes") {
         recipeFilter: GetRecipeReceive.RecipeFilter?,
         requestUserId: Int? = null
     ) = transaction {
+
+        val todaySeed = LocalDate.now().toString()
+
+        val orderExpr = CustomFunction(
+            functionName = "MD5",
+            columnType = TextColumnType(),
+            CustomFunction(
+                functionName = "CONCAT",
+                columnType = TextColumnType(),
+                RecipeTable.id,
+                stringLiteral(todaySeed)
+            )
+        )
+
         var query = RecipeTable
             .selectAll()
-            .limit(limit)
-            .offset(offset.toLong())
             .apply {
                 andWhere { RecipeTable.title.lowerCase() like "%${q.lowercase()}%" }
             }
@@ -97,9 +114,16 @@ object RecipeTable: IntIdTable("recipes") {
             s.difficulty?.let { query = query.andWhere { RecipeTable.difficulty eq it.name } }
         }
 
-        query.map { it.toRecipe(requestUserId) }.filter { recipe ->
-            recipeFilter?.tagIds?.let { TagToRecipeTable.recipeContainTag(recipe.id, it) } ?: true
-        }
+        query
+            .orderBy(orderExpr to SortOrder.ASC)
+            .limit(limit)
+            .offset(offset.toLong())
+            .map { it.toRecipe(requestUserId) }
+            .filter { recipe ->
+                recipeFilter?.tagIds?.let {
+                    TagToRecipeTable.recipeContainTag(recipe.id, it)
+                } ?: true
+            }
     }
 
     private fun ResultRow.toRecipe(requestUserId: Int? = null): RecipeDTO {
