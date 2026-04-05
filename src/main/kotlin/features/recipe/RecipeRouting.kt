@@ -30,6 +30,10 @@ fun Route.configureRecipeRouting() {
                 val controller = RecipeController(call)
                 controller.addRecipe()
             }
+            get("/tags") {
+                val controller = RecipeController(call)
+                controller.getTags()
+            }
         }
     }
 }

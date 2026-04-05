@@ -10,6 +10,7 @@ import ru.topbun.features.recipe.entity.AddRecipeReceive
 import ru.topbun.features.recipe.entity.GetRecipeReceive
 import ru.topbun.models.history.HistoryTable
 import ru.topbun.models.recipe.RecipeTable
+import ru.topbun.models.tag.TagTable
 import ru.topbun.utills.AppException
 import ru.topbun.utills.ErrorMessage
 import ru.topbun.utills.getUserFromToken
@@ -78,6 +79,13 @@ class RecipeController(
             val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
             val recipes = RecipeTable.getRecipeByUserId(id)
             call.respond(recipes)
+        }
+    }
+
+    suspend fun getTags(){
+        call.wrapperException {
+            val tags = TagTable.getTags()
+            call.respond(tags)
         }
     }
 

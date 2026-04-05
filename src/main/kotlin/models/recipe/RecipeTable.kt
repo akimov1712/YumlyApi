@@ -1,11 +1,8 @@
 package ru.topbun.models.recipe
 
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.CustomFunction
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.TextColumnType
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -13,7 +10,6 @@ import org.jetbrains.exposed.sql.kotlin.datetime.CurrentDateTime
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.stringLiteral
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.topbun.features.recipe.entity.AddRecipeReceive
 import ru.topbun.features.recipe.entity.GetRecipeReceive
@@ -90,17 +86,6 @@ object RecipeTable: IntIdTable("recipes") {
 
         val todaySeed = LocalDate.now().toString()
 
-        val orderExpr = CustomFunction(
-            functionName = "MD5",
-            columnType = TextColumnType(),
-            CustomFunction(
-                functionName = "CONCAT",
-                columnType = TextColumnType(),
-                RecipeTable.id,
-                stringLiteral(todaySeed)
-            )
-        )
-
         var query = RecipeTable
             .selectAll()
             .apply {
@@ -115,15 +100,17 @@ object RecipeTable: IntIdTable("recipes") {
         }
 
         query
-            .orderBy(orderExpr to SortOrder.ASC)
-            .limit(limit)
-            .offset(offset.toLong())
             .map { it.toRecipe(requestUserId) }
             .filter { recipe ->
                 recipeFilter?.tagIds?.let {
                     TagToRecipeTable.recipeContainTag(recipe.id, it)
                 } ?: true
             }
+            .sortedBy { recipe ->
+                "$todaySeed:${recipe.id}".hashCode()
+            }
+            .drop(offset)
+            .take(limit)
     }
 
     private fun ResultRow.toRecipe(requestUserId: Int? = null): RecipeDTO {
