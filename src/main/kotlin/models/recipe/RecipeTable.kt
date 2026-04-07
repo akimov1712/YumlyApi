@@ -2,6 +2,7 @@ package ru.topbun.models.recipe
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.CustomFunction
+import org.jetbrains.exposed.sql.IntegerColumnType
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SortOrder
@@ -95,11 +96,11 @@ object RecipeTable: IntIdTable("recipes") {
         val todaySeed = LocalDate.now().toString()
 
         val orderExpr = CustomFunction(
-            functionName = "MD5",
-            columnType = TextColumnType(),
+            "CRC32",
+            IntegerColumnType(),
             CustomFunction(
-                functionName = "CONCAT",
-                columnType = TextColumnType(),
+                "CONCAT",
+                TextColumnType(),
                 RecipeTable.id,
                 stringLiteral(todaySeed)
             )
