@@ -22,7 +22,7 @@ data class AddRecipeReceive(
 ){
 
     fun isValid(): Boolean{
-        if (title.length > 48) throw AppException(HttpStatusCode.Conflict, ErrorMessage.LENGTH_TITLE)
+        if (title.length > 72) throw AppException(HttpStatusCode.Conflict, ErrorMessage.LENGTH_TITLE)
         if ((description?.length ?: 0) > 500) throw AppException(HttpStatusCode.Conflict, ErrorMessage.LENGTH_DESCR)
         if (cookingTime > 14400) throw AppException(HttpStatusCode.Conflict, ErrorMessage.COUNT_COOKING_TIME)
         if (ingredients.size !in (1..32)) throw AppException(HttpStatusCode.Conflict, ErrorMessage.COUNT_INGREDIENTS)
