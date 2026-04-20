@@ -4,6 +4,7 @@ import io.ktor.server.application.Application
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import ru.topbun.plugins.configureDatabases
+import ru.topbun.plugins.configureLogging
 import ru.topbun.plugins.configureRouting
 import ru.topbun.plugins.configureSecurity
 import ru.topbun.plugins.configureSerialization
@@ -14,6 +15,7 @@ fun main() {
 }
 
 fun Application.module() {
+    configureLogging()
     configureSerialization()
     configureDatabases()
     configureSecurity()

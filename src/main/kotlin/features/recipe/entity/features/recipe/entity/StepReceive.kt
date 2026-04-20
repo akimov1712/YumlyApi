@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class StepReceive(
     val description: String,
-    val previewUrl: String?
+    val previewUrl: String? = null
 )

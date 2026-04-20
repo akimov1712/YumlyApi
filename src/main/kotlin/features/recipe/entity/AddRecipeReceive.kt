@@ -9,8 +9,8 @@ import ru.topbun.utills.ErrorMessage
 @Serializable
 data class AddRecipeReceive(
     val title: String,
-    val description: String?,
-    val previewUrl: String?,
+    val description: String? = null,
+    val previewUrl: String? = null,
     val cookingTime: Int,
     val kcal: Int,
     val protein: Double,
