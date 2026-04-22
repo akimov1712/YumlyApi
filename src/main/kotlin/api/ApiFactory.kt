@@ -29,11 +29,11 @@ object ApiFactory {
 
         defaultRequest {
             contentType(ContentType.Application.Json.withParameter("charset", "utf-8"))
-            headers[HEADER_NAME_AUTH] = "$HEADER_VALUE_APIKEY ${Env["GPT_API_KEY"]}"
+            headers[HEADER_NAME_AUTH] = "$HEADER_VALUE_BEARER ${Env["XAI_API_KEY"]}"
         }
     }
 
     const val HEADER_NAME_AUTH = "Authorization"
-    const val HEADER_VALUE_APIKEY = "Api-Key"
+    const val HEADER_VALUE_BEARER = "Bearer"
 
 }

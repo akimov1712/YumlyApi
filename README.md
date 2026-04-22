@@ -37,8 +37,8 @@ JWT_KEY_EMAIL=email
 SENDER_EMAIL=your_email@gmail.com
 SENDER_APP_PASSWORD=app_password
 
-GPT_ID_FOLDER=id_folder
-GPT_API_KEY=api_key
+XAI_API_KEY=xai_api_key
+GROK_MODEL=grok-4-1-fast-non-reasoning
 GPT_SYSTEM_ROLE_TEXT=system_role
 ```
 
@@ -670,13 +670,16 @@ Optional or nullable fields are marked with **(optional, nullable)**.
   {
     "id": 0,
     "userId": 0,
-    "messages": {
-      "id": 0,
-      "role": "ASSISTANT",
-      "text": "text".
-      "createdAt": `date`
-    },
-    "createdAt": `date`
+    "messages": [
+      {
+        "id": 0,
+        "role": "USER",
+        "text": "text",
+        "createdAt": `date`
+      }
+    ],
+    "createdAt": `date`,
+    "updatedAt": `date`
   }
 ]
 ```
@@ -694,13 +697,16 @@ Optional or nullable fields are marked with **(optional, nullable)**.
 {
   "id": 0,
   "userId": 0,
-  "messages": {
-    "id": 0,
-    "role": "ASSISTANT",
-    "text": "text".
-    "createdAt": `date`
-  },
-  "createdAt": `date`
+  "messages": [
+    {
+      "id": 0,
+      "role": "USER",
+      "text": "text",
+      "createdAt": `date`
+    }
+  ],
+  "createdAt": `date`,
+  "updatedAt": `date`
 }
 ```
 
@@ -728,7 +734,8 @@ Optional or nullable fields are marked with **(optional, nullable)**.
 **Response:** Updated chat with assistant reply
 
 **Errors**
-- `400 BAD_REQUEST` — GPT API request failed
+- `400 BAD_REQUEST` — empty message, message limit exceeded, or GPT API request failed
+- `404 NOT_FOUND` — chat not found or chat belongs to another user
 
 
 

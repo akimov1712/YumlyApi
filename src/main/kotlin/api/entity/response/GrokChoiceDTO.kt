@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 import ru.topbun.api.entity.GptMessageTransport
 
 @Serializable
-data class YandexGptMessagesDTO(
-    val message: GptMessageTransport
+data class GrokChoiceDTO(
+    val message: GptMessageTransport,
 )

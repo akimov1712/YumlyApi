@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AddMessageReceive(
-    val chatId: Int?,
+    val chatId: Int? = null,
     val text: String
 )
