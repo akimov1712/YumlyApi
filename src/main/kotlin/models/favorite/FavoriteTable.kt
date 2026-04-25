@@ -49,7 +49,7 @@ object FavoriteTable: IntIdTable("favorite") {
     }
 
     private fun addFavorite(userId: Int, recipeId: Int) = transaction {
-        val authorId = RecipeTable.getRecipeById(recipeId).author.userId
+        val authorId = RecipeTable.getRecipeById(recipeId)?.author?.userId  ?: return@transaction
         insert {
             it[FavoriteTable.userId] = userId
             it[FavoriteTable.recipeId] = recipeId

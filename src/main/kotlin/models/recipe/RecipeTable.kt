@@ -77,7 +77,7 @@ object RecipeTable: IntIdTable("recipes") {
     }
 
     fun getRecipeById(id: Int, requestUserId: Int? = null) = transaction {
-        selectAll().where { RecipeTable.id eq id }.first().toRecipe(requestUserId)
+        selectAll().where { RecipeTable.id eq id }.firstOrNull()?.toRecipe(requestUserId)
     }
 
     fun getRecipeByUserId(userId: Int) = transaction {

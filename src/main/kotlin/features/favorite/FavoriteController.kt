@@ -22,7 +22,7 @@ class FavoriteController(
         call.wrapperException {
             val user = call.getUserFromToken()
             val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
-            val recipe = RecipeTable.getRecipeById(id)
+            val recipe = RecipeTable.getRecipeById(id) ?: return@wrapperException
             val result = FavoriteTable.switchFavorite(user.id, id)
             if (result) NotificationTable.addNotification(user.id, NotificationType.LIKE,recipe.author.userId, recipe.id )
             call.respond(result)
