@@ -7,6 +7,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
 import ru.topbun.features.recipe.entity.AddRecipeReceive
+import ru.topbun.features.recipe.entity.GetRecipeByUserIdReceive
 import ru.topbun.features.recipe.entity.GetRecipeReceive
 import ru.topbun.models.history.HistoryTable
 import ru.topbun.models.recipe.RecipeTable
@@ -42,7 +43,7 @@ class RecipeController(
             val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
             val user = call.getUserFromToken()
             val recipe = RecipeTable.getRecipeById(id)  ?: return@wrapperException
-            if (user.id != recipe.author?.userId) throw AppException(HttpStatusCode.Forbidden, ErrorMessage.DELETE_RECIPE)
+            if (user.id != recipe.author.userId) throw AppException(HttpStatusCode.Forbidden, ErrorMessage.DELETE_RECIPE)
             RecipeTable.deleteRecipe(id)
             call.respond(HttpStatusCode.OK)
         }
@@ -76,8 +77,9 @@ class RecipeController(
 
     suspend fun getRecipesByUserId(){
         call.wrapperException {
+            val receive = call.receive<GetRecipeByUserIdReceive>()
             val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
-            val recipes = RecipeTable.getRecipeByUserId(id)
+            val recipes = RecipeTable.getRecipeByUserId(id, receive.limit, receive.offset)
             call.respond(recipes)
         }
     }

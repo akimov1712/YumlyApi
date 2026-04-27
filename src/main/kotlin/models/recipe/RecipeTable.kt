@@ -80,8 +80,11 @@ object RecipeTable: IntIdTable("recipes") {
         selectAll().where { RecipeTable.id eq id }.firstOrNull()?.toRecipe(requestUserId)
     }
 
-    fun getRecipeByUserId(userId: Int) = transaction {
-        selectAll().where { RecipeTable.userId eq userId }.map { it.toRecipe() }
+    fun getRecipeByUserId(userId: Int, limit: Int, offset: Int,) = transaction {
+        selectAll()
+            .where { RecipeTable.userId eq userId }
+            .offset(offset.toLong())
+            .limit(limit).map { it.toRecipe() }
     }
 
 

@@ -2,7 +2,7 @@ package ru.topbun.features.recipe.entity
 
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.Serializable
-import ru.topbun.features.recipe.entity.features.recipe.entity.StepReceive
+import ru.topbun.features.recipe.entity.StepReceive
 import ru.topbun.utills.AppException
 import ru.topbun.utills.ErrorMessage
 

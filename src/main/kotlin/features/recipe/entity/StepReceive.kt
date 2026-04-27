@@ -1,4 +1,4 @@
-package ru.topbun.features.recipe.entity.features.recipe.entity
+package ru.topbun.features.recipe.entity
 
 import kotlinx.serialization.Serializable
 

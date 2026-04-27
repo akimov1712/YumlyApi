@@ -18,7 +18,7 @@ fun Route.configureRecipeRouting() {
                 val controller = RecipeController(call)
                 controller.getRecipeById()
             }
-            get("/user/{id}") {
+            post("/user/{id}") {
                 val controller = RecipeController(call)
                 controller.getRecipesByUserId()
             }
