@@ -87,6 +87,9 @@ object RecipeTable: IntIdTable("recipes") {
             .limit(limit).map { it.toRecipe() }
     }
 
+    fun getRecipesCountByUserId(userId: Int) = transaction {
+        selectAll().where{ RecipeTable.userId eq userId }.count()
+    }
 
     fun getRecipes(
         q: String = "",
