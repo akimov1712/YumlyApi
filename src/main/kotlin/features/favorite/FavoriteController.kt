@@ -24,7 +24,7 @@ class FavoriteController(
             val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
             val recipe = RecipeTable.getRecipeById(id) ?: return@wrapperException
             val result = FavoriteTable.switchFavorite(user.id, id)
-            if (result) NotificationTable.addNotification(user.id, NotificationType.LIKE,recipe.author.userId, recipe.id )
+            if (result) NotificationTable.addNotification(recipe.author.userId, NotificationType.LIKE,user.id, recipe.id)
             call.respond(result)
         }
     }

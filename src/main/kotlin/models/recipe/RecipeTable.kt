@@ -24,6 +24,7 @@ import ru.topbun.features.recipe.entity.AddRecipeReceive
 import ru.topbun.features.recipe.entity.GetRecipeReceive
 import ru.topbun.models.favorite.FavoriteTable
 import ru.topbun.models.ingredient.IngredientTable
+import ru.topbun.models.notification.NotificationTable
 import ru.topbun.models.step.StepTable
 import ru.topbun.models.tag.TagToRecipeTable
 import ru.topbun.models.user.UserTable
@@ -69,6 +70,7 @@ object RecipeTable: IntIdTable("recipes") {
     }
 
     fun deleteRecipe(id: Int) = transaction {
+        NotificationTable.deleteRecipe(id)
         FavoriteTable.deleteRecipe(id)
         StepTable.deleteSteps(id)
         IngredientTable.deleteIngredients(id)

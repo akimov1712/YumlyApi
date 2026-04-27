@@ -3,12 +3,15 @@ package ru.topbun.models.notification
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.kotlin.datetime.CurrentDateTime
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.topbun.models.favorite.FavoriteTable
 import ru.topbun.models.recipe.RecipeTable
 import ru.topbun.models.user.UserTable
 
@@ -19,6 +22,11 @@ object NotificationTable: IntIdTable("notifications") {
     val initiatorId = reference("initiator_id", UserTable)
     val recipeId = reference("recipe_id", RecipeTable).nullable()
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
+
+
+    fun deleteRecipe(recipeId: Int) = transaction {
+        deleteWhere { NotificationTable.recipeId eq recipeId }
+    }
 
     fun addNotification(userId: Int, type: NotificationType, initiatorId: Int, recipeId: Int? = null) = transaction {
         if (!containNotification(userId, type, initiatorId, recipeId)){
