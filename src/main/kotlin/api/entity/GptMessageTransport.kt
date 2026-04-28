@@ -8,13 +8,13 @@ import ru.topbun.utills.Env
 @Serializable
 data class GptMessageTransport(
     val role: String,
-    val text: String,
+    val content: String,
 ){
 
     companion object{
         fun createSystemRoleMessage() = GptMessageTransport(
             role = GptMessageRoleType.SYSTEM.toLowerString(),
-            text = Env["GPT_SYSTEM_ROLE_TEXT"]
+            content = Env["GPT_SYSTEM_ROLE_TEXT"]
         )
     }
 

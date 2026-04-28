@@ -11,6 +11,7 @@ data class GptChatDTO(
     val userId: Int,
     val messages: List<GptMessageDTO>,
     val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
 ){
 
     fun toResponse() = GptChatResponse(chat = this)

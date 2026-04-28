@@ -12,7 +12,7 @@ import org.junit.Test
 import ru.topbun.features.recipe.entity.AddRecipeReceive
 import ru.topbun.features.recipe.entity.GetRecipeReceive
 import ru.topbun.features.recipe.entity.IngredientReceive
-import ru.topbun.features.recipe.entity.features.recipe.entity.StepReceive
+import ru.topbun.features.recipe.entity.StepReceive
 import ru.topbun.models.recipe.RecipeDTO
 import ru.topbun.module
 import kotlin.test.assertEquals

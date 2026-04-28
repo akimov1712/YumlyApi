@@ -6,15 +6,15 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
-import ru.topbun.api.YandexGptApi
-import ru.topbun.api.entity.YandexGptTransport
-import ru.topbun.api.entity.response.YandexGptResponse
+import ru.topbun.api.GrokApi
+import ru.topbun.api.entity.GrokChatRequest
+import ru.topbun.api.entity.GptMessageTransport
+import ru.topbun.api.entity.response.GrokChatResponse
 import ru.topbun.api.entity.toTransport
 import ru.topbun.features.gpt.entity.AddMessageReceive
 import ru.topbun.features.gpt.entity.GetChatsReceive
 import ru.topbun.models.gpt.chat.GptChatTable
 import ru.topbun.models.gpt.message.GptMessageRoleType
-import ru.topbun.models.gpt.message.GptMessageTable
 import ru.topbun.utills.AppException
 import ru.topbun.utills.Env
 import ru.topbun.utills.ErrorMessage
@@ -46,28 +46,54 @@ class GptController(
 
     suspend fun sendMessage(){
         call.wrapperException {
-            val api = YandexGptApi()
+            val api = GrokApi()
 
             val user = call.getUserFromToken()
             val receive = call.receive<AddMessageReceive>()
-            val chatId = receive.chatId ?: GptChatTable.addChat(user.id)
-            GptMessageTable.addMessage(chatId, GptMessageRoleType.USER, receive.text)
+            val userText = receive.text.trim()
+            if (userText.isEmpty()) throw AppException(HttpStatusCode.BadRequest, ErrorMessage.GPT_EMPTY_MESSAGE)
 
-            val messages = GptMessageTable.getMessages(chatId)
-            if (messages.count() > Env["GPT_MAX_MESSAGE"].toInt()) throw AppException(HttpStatusCode.BadRequest, ErrorMessage.GPT_MAX_MESSAGE)
-            val yandexGptTransport = YandexGptTransport(messages = messages.toTransport())
-            val response = api.sendMessage(yandexGptTransport)
-            if (response.status != HttpStatusCode.OK) {
+            val chat = receive.chatId?.let { chatId ->
+                GptChatTable.getChat(chatId, user.id) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.CHAT_NOT_FOUND)
+            }
+
+            val history = chat?.messages.orEmpty()
+            if (history.count() + 2 > Env["GPT_MAX_MESSAGE"].toInt()) throw AppException(HttpStatusCode.BadRequest, ErrorMessage.GPT_MAX_MESSAGE)
+
+            val requestMessages = history.toTransport() + GptMessageTransport(
+                role = GptMessageRoleType.USER.toLowerString(),
+                content = userText,
+            )
+            val grokChatRequest = GrokChatRequest(messages = requestMessages)
+            val response = api.sendMessage(grokChatRequest)
+            if (response.status.value !in 200..299) {
                 println(response.bodyAsText())
                 throw AppException(HttpStatusCode.BadRequest, ErrorMessage.ERROR_GPT_REQUEST)
             }
 
-            val gptResponse = response.body<YandexGptResponse>()
-            val assistantMessage = gptResponse.result.alternatives.last().message
-            GptMessageTable.addMessage(chatId = chatId, role = GptMessageRoleType.fromString(assistantMessage.role), assistantMessage.text)
+            val gptResponse = try {
+                response.body<GrokChatResponse>()
+            } catch (e: Exception) {
+                throw AppException(HttpStatusCode.BadRequest, ErrorMessage.ERROR_GPT_REQUEST)
+            }
+            val assistantMessage = gptResponse.choices.firstOrNull()?.message
+                ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.ERROR_GPT_REQUEST)
+            val assistantText = assistantMessage.content.trim()
+            if (assistantText.isEmpty()) throw AppException(HttpStatusCode.BadRequest, ErrorMessage.ERROR_GPT_REQUEST)
+            val assistantRole = try {
+                GptMessageRoleType.fromString(assistantMessage.role)
+            } catch (e: Exception) {
+                throw AppException(HttpStatusCode.BadRequest, ErrorMessage.ERROR_GPT_REQUEST)
+            }
 
-            val chat = GptChatTable.getChat(chatId) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.CHAT_NOT_FOUND)
-            call.respond(chat.toResponse())
+            val updatedChat = GptChatTable.addExchange(
+                userId = user.id,
+                chatId = receive.chatId,
+                userText = userText,
+                assistantRole = assistantRole,
+                assistantText = assistantText,
+            ) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.CHAT_NOT_FOUND)
+            call.respond(updatedChat.toResponse())
         }
     }
 

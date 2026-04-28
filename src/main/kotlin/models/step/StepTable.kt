@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import ru.topbun.features.recipe.entity.features.recipe.entity.StepReceive
+import ru.topbun.features.recipe.entity.StepReceive
 import ru.topbun.models.recipe.RecipeTable
 
 object StepTable: IntIdTable("steps") {

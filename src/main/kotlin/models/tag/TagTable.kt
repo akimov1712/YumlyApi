@@ -17,6 +17,10 @@ object TagTable: IntIdTable("tags") {
         selectAll().where { TagTable.id eq id }.first().toDTO()
     }
 
+    fun getTags() = transaction {
+        selectAll().map { it.toDTO() }
+    }
+
     private fun ResultRow.toDTO() = TagDTO(
         id = this[id].value,
         type = TagType.valueOf(this[TagTable.type]),

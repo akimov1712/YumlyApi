@@ -2,15 +2,15 @@ package ru.topbun.features.recipe.entity
 
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.Serializable
-import ru.topbun.features.recipe.entity.features.recipe.entity.StepReceive
+import ru.topbun.features.recipe.entity.StepReceive
 import ru.topbun.utills.AppException
 import ru.topbun.utills.ErrorMessage
 
 @Serializable
 data class AddRecipeReceive(
     val title: String,
-    val description: String?,
-    val previewUrl: String?,
+    val description: String? = null,
+    val previewUrl: String? = null,
     val cookingTime: Int,
     val kcal: Int,
     val protein: Double,
@@ -22,7 +22,7 @@ data class AddRecipeReceive(
 ){
 
     fun isValid(): Boolean{
-        if (title.length > 48) throw AppException(HttpStatusCode.Conflict, ErrorMessage.LENGTH_TITLE)
+        if (title.length > 72) throw AppException(HttpStatusCode.Conflict, ErrorMessage.LENGTH_TITLE)
         if ((description?.length ?: 0) > 500) throw AppException(HttpStatusCode.Conflict, ErrorMessage.LENGTH_DESCR)
         if (cookingTime > 14400) throw AppException(HttpStatusCode.Conflict, ErrorMessage.COUNT_COOKING_TIME)
         if (ingredients.size !in (1..32)) throw AppException(HttpStatusCode.Conflict, ErrorMessage.COUNT_INGREDIENTS)

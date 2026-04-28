@@ -12,7 +12,7 @@ import io.ktor.server.routing.routing
 fun Route.configureFavoriteRouting(){
     authenticate {
         route("/favorite") {
-            post("/{id}") {
+            post("/switch/{id}") {
                 val controller = FavoriteController(call)
                 controller.switchFavorite()
             }
@@ -20,7 +20,7 @@ fun Route.configureFavoriteRouting(){
                 val controller = FavoriteController(call)
                 controller.getMyFavoriteRecipe()
             }
-            get("/{id}") {
+            post("/{id}") {
                 val controller = FavoriteController(call)
                 controller.getFavoriteRecipe()
             }

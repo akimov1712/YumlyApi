@@ -15,6 +15,7 @@ import ru.topbun.models.user.UserTable
 import ru.topbun.utills.AppException
 import ru.topbun.utills.ErrorMessage
 import ru.topbun.utills.getUserFromToken
+import ru.topbun.utills.toPasswordHash
 import ru.topbun.utills.wrapperException
 
 class AccountController(
@@ -27,7 +28,7 @@ class AccountController(
             val user = UserTable.getUser(receive.email) ?: throw AppException(HttpStatusCode.NotFound, ErrorMessage.USER_NOT_FOUND)
             val verification = getVerificationCode(user.id, VerificationType.RESET_PASSWORD)
             if (verification?.confirmed ?: false){
-                UserTable.updatePassword(user.id, receive.newPassword)
+                UserTable.updatePassword(user.id, receive.newPassword.toPasswordHash())
                 VerificationTable.updateConfirmedVerificationCode(verification.id, false)
                 call.respond(HttpStatusCode.OK)
             }

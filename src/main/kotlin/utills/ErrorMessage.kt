@@ -9,6 +9,7 @@ data class AppException(val code: HttpStatusCode, override val message: String =
 
 object ErrorMessage {
     const val GPT_MAX_MESSAGE = "Превышен лимит сообщений в чате"
+    const val GPT_EMPTY_MESSAGE = "Сообщение не может быть пустым"
     const val SEND_MESSAGE = "При отправке кода подтверждения произошла ошибка"
     const val VERIFICATION_CODE_NOT_FOUND = "Код подтверждения не найден"
     const val INVALID_CODE_EXPIRED = "Код подтверждения истек, запросите код подтверждения заново"

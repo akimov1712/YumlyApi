@@ -18,7 +18,7 @@ fun Route.configureRecipeRouting() {
                 val controller = RecipeController(call)
                 controller.getRecipeById()
             }
-            get("/user/{id}") {
+            post("/user/{id}") {
                 val controller = RecipeController(call)
                 controller.getRecipesByUserId()
             }
@@ -29,6 +29,10 @@ fun Route.configureRecipeRouting() {
             post("/add") {
                 val controller = RecipeController(call)
                 controller.addRecipe()
+            }
+            get("/tags") {
+                val controller = RecipeController(call)
+                controller.getTags()
             }
         }
     }
