@@ -3,6 +3,7 @@ package ru.topbun.models.recipe
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.CustomFunction
 import org.jetbrains.exposed.sql.IntegerColumnType
+import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SortOrder
@@ -23,6 +24,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import ru.topbun.features.recipe.entity.AddRecipeReceive
 import ru.topbun.features.recipe.entity.GetRecipeReceive
 import ru.topbun.models.favorite.FavoriteTable
+import ru.topbun.models.follow.FollowTable
 import ru.topbun.models.ingredient.IngredientTable
 import ru.topbun.models.notification.NotificationTable
 import ru.topbun.models.step.StepTable
@@ -92,6 +94,23 @@ object RecipeTable: IntIdTable("recipes") {
     fun getRecipesCountByUserId(userId: Int) = transaction {
         selectAll().where{ RecipeTable.userId eq userId }.count()
     }
+
+    fun getFollowRecipes(userId: Int, limit: Int, offset: Int) = transaction {
+        RecipeTable
+            .join(FollowTable, JoinType.INNER,
+                onColumn = RecipeTable.userId,
+                otherColumn = FollowTable.followingId
+            )
+            .selectAll()
+            .where { FollowTable.followerId eq userId }
+            .offset(offset.toLong())
+            .limit(limit)
+            .orderBy(RecipeTable.createdAt, SortOrder.DESC)
+            .toList()
+            .map { it.toRecipe(userId) }
+    }
+
+
 
     fun getRecipes(
         q: String = "",
