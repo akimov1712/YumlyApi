@@ -35,7 +35,7 @@ class FollowController(
     suspend fun getFollowers(){
         call.wrapperException {
             val tokenPrincipal = call.principal<JWTPrincipal>()
-            val userId = call.getUserFromToken().takeIf { tokenPrincipal != null }?.id
+            val userId = if (tokenPrincipal != null) call.getUserFromToken().id else null
             val receive = call.receive<GetFollowReceive>()
             val followersIds = FollowTable.getFollowersIds(receive.followId, receive.limit, receive.offset)
             val followResponse = FollowersResponse(
@@ -49,7 +49,7 @@ class FollowController(
     suspend fun getFollowing(){
         call.wrapperException {
             val tokenPrincipal = call.principal<JWTPrincipal>()
-            val userId = call.getUserFromToken().takeIf { tokenPrincipal != null }?.id
+            val userId = if (tokenPrincipal != null) call.getUserFromToken().id else null
             val receive = call.receive<GetFollowReceive>()
             val followingIds = FollowTable.getFollowingIds(receive.followId, receive.limit, receive.offset)
             val followResponse = FollowersResponse(

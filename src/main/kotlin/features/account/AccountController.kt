@@ -45,7 +45,7 @@ class AccountController(
     suspend fun profileInfo(){
         call.wrapperException {
             val tokenPrincipal = call.principal<JWTPrincipal>()
-            val userId = call.getUserFromToken().takeIf { tokenPrincipal != null }?.id
+            val userId = if (tokenPrincipal != null) call.getUserFromToken().id else null
             val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
             val profile = UserTable.getUser(id).toProfile(userId)
             call.respond(profile)
