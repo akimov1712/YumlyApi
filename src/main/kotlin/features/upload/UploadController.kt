@@ -57,7 +57,7 @@ class UploadController(private val call: RoutingCall) {
     }
 
     private fun createImageDirectory(): File {
-        val directory = File("src/main/resources/drawable")
+        val directory = File("/root/yumly/uploads")
         if (!directory.exists()) {
             directory.mkdirs()
         }

@@ -15,6 +15,6 @@ fun Route.configureUploadRouting() {
     }
 
     static("/drawable") {
-        files("src/main/resources/drawable")
+        files("/root/yumly/uploads")
     }
 }
