@@ -6,6 +6,7 @@ import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
+import ru.topbun.features.follow.entity.GetFollowReceive
 import ru.topbun.features.recipe.entity.AddRecipeReceive
 import ru.topbun.features.recipe.entity.GetRecipeByUserIdReceive
 import ru.topbun.features.recipe.entity.GetRecipeReceive
@@ -21,18 +22,42 @@ class RecipeController(
     val call: RoutingCall
 ) {
 
-    suspend fun getRecipes(){
+    suspend fun getFollowRecipes() {
+        call.wrapperException {
+            val receive = call.receive<GetRecipeReceive>()
+            val user = call.getUserFromToken()
+            val recipe = RecipeTable.getFollowRecipes(
+                userId = user.id,
+                offset = receive.offset,
+                limit = receive.limit
+            )
+            call.respond(recipe)
+        }
+    }
+
+    suspend fun getRecipes() {
         call.wrapperException {
             val receive = call.receive<GetRecipeReceive>()
             HistoryTable.insert(receive.q)
 
             val tokenPrincipal = call.principal<JWTPrincipal>()
-            if(tokenPrincipal == null){
-                val recipe = RecipeTable.getRecipes(receive.q, receive.limit, receive.offset, recipeFilter = receive.recipeFilter)
+            if (tokenPrincipal == null) {
+                val recipe = RecipeTable.getRecipes(
+                    receive.q,
+                    receive.limit,
+                    receive.offset,
+                    recipeFilter = receive.recipeFilter
+                )
                 call.respond(recipe)
             } else {
                 val user = call.getUserFromToken()
-                val recipe = RecipeTable.getRecipes(receive.q, receive.limit, receive.offset, recipeFilter = receive.recipeFilter, requestUserId = user.id)
+                val recipe = RecipeTable.getRecipes(
+                    receive.q,
+                    receive.limit,
+                    receive.offset,
+                    recipeFilter = receive.recipeFilter,
+                    requestUserId = user.id
+                )
                 call.respond(recipe)
             }
         }
@@ -40,20 +65,25 @@ class RecipeController(
 
     suspend fun deleteRecipe() {
         call.wrapperException {
-            val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
+            val id = call.parameters["id"]?.toIntOrNull()
+                ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
             val user = call.getUserFromToken()
-            val recipe = RecipeTable.getRecipeById(id)  ?: return@wrapperException
-            if (user.id != recipe.author.userId) throw AppException(HttpStatusCode.Forbidden, ErrorMessage.DELETE_RECIPE)
+            val recipe = RecipeTable.getRecipeById(id) ?: return@wrapperException
+            if (user.id != recipe.author.userId) throw AppException(
+                HttpStatusCode.Forbidden,
+                ErrorMessage.DELETE_RECIPE
+            )
             RecipeTable.deleteRecipe(id)
             call.respond(HttpStatusCode.OK)
         }
     }
 
-    suspend fun getRecipeById(){
+    suspend fun getRecipeById() {
         call.wrapperException {
-            val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
+            val id = call.parameters["id"]?.toIntOrNull()
+                ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
             val tokenPrincipal = call.principal<JWTPrincipal>()
-            if(tokenPrincipal == null){
+            if (tokenPrincipal == null) {
                 val recipe = RecipeTable.getRecipeById(id) ?: return@wrapperException
                 call.respond(recipe)
             } else {
@@ -64,27 +94,29 @@ class RecipeController(
         }
     }
 
-    suspend fun addRecipe(){
+    suspend fun addRecipe() {
         call.wrapperException {
             val user = call.getUserFromToken()
             val recipeReceive = call.receive<AddRecipeReceive>()
-            if (recipeReceive.isValid()){
-                val recipe = RecipeTable.addRecipe(user.id, recipeReceive) ?: return@wrapperException
+            if (recipeReceive.isValid()) {
+                val recipe =
+                    RecipeTable.addRecipe(user.id, recipeReceive) ?: return@wrapperException
                 call.respond(recipe)
             }
         }
     }
 
-    suspend fun getRecipesByUserId(){
+    suspend fun getRecipesByUserId() {
         call.wrapperException {
             val receive = call.receive<GetRecipeByUserIdReceive>()
-            val id = call.parameters["id"]?.toIntOrNull() ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
+            val id = call.parameters["id"]?.toIntOrNull()
+                ?: throw AppException(HttpStatusCode.BadRequest, ErrorMessage.PARAMS_ID)
             val recipes = RecipeTable.getRecipeByUserId(id, receive.limit, receive.offset)
             call.respond(recipes)
         }
     }
 
-    suspend fun getTags(){
+    suspend fun getTags() {
         call.wrapperException {
             val tags = TagTable.getTags()
             call.respond(tags)
