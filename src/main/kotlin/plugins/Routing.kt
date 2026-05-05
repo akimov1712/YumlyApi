@@ -4,6 +4,8 @@ import features.account.configureAccountRouting
 import features.signUp.configureSignUpRouting
 import features.upload.configureUploadRouting
 import io.ktor.server.application.Application
+import io.ktor.server.http.content.resources
+import io.ktor.server.http.content.static
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import ru.topbun.features.favorite.configureFavoriteRouting
@@ -29,6 +31,11 @@ fun Application.configureRouting() {
             configureGptRouting()
             configureNotificationRouting()
             configureFollowRouting()
+        }
+        routing {
+            static("/") {
+                resources("static")
+            }
         }
     }
 }
